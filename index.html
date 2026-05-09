@@ -12,8 +12,25 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- SheetJS for Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- MSAL for Microsoft Graph API -->
-    <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIHM2-hmlf011DzaOpB18LR1b8WBZihZA",
+            authDomain: "vef-or.firebaseapp.com",
+            databaseURL: "https://vef-or-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "vef-or",
+            storageBucket: "vef-or.firebasestorage.app",
+            messagingSenderId: "663935188087",
+            appId: "1:663935188087:web:3de76fa8e025966e5d9a72"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
     
     <script>
         tailwind.config = {
@@ -228,19 +245,13 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
                 <div>
                     <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
-                        <i class="ph ph-database text-brand-600"></i> SharePoint Database Integration
+                        <i class="ph ph-database text-brand-600"></i> Cloud Database Integration
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5" id="dbStatusText">รอเข้าสู่ระบบ Microsoft...</p>
+                    <p class="text-xs text-slate-500 mt-0.5" id="dbStatusText">กำลังเชื่อมต่อฐานข้อมูล...</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button id="btnLogin" onclick="loginMicrosoft()" class="bg-slate-800 hover:bg-slate-900 text-white transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0">
-                        <i class="ph ph-microsoft-logo text-lg"></i> Sign in with Microsoft
-                    </button>
-                    <button id="btnLoadSharePoint" onclick="loadFromSharePoint()" class="bg-blue-600 hover:bg-blue-700 text-white transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0 hidden">
-                        <i class="ph ph-cloud-arrow-down text-lg"></i> โหลดข้อมูลจาก SharePoint
-                    </button>
-                    <button id="btnSelectFolder" onclick="selectDatabaseFolder()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0">
-                        <i class="ph ph-folder-open text-lg"></i> Local Fallback
+                    <button id="btnSelectFolder" onclick="selectDatabaseFolder()" class="bg-blue-600 hover:bg-blue-700 text-white transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0">
+                        <i class="ph ph-folder-open text-lg"></i> อัปเดตข้อมูลจากโฟลเดอร์ Excel ในเครื่อง
                     </button>
                 </div>
             </div>
@@ -249,9 +260,8 @@
                 <!-- Vessel Dropdown -->
                 <div class="md:col-span-1">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ชื่อเรือ (Vessel)</label>
-                    <select id="vesselSelect" onchange="handleVesselSelection()" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:border-brand-500 transition disabled:opacity-50" disabled>
-                        <option value="">-- เลือกเรือ --</option>
-                    </select>
+                    <input type="text" list="vesselList" id="vesselSelect" onchange="handleVesselSelection()" placeholder="-- พิมพ์เพื่อค้นหา --" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:border-brand-500 transition disabled:opacity-50" disabled>
+                    <datalist id="vesselList"></datalist>
                 </div>
                 <!-- Load Date -->
                 <div>
@@ -451,174 +461,35 @@
         }
 
         /* -----------------------------------------------------------
-           MICROSOFT GRAPH API (SHAREPOINT) INTEGRATION
+           FIREBASE INTEGRATION
            ----------------------------------------------------------- */
-        const msalConfig = {
-            auth: {
-                clientId: "c6f68c7c-f0ff-40f9-b1c9-352b9a168ede",
-                authority: "https://login.microsoftonline.com/cad7da24-86a2-41b3-b78b-2de7f8403308",
-                redirectUri: window.location.href.split('?')[0].split('#')[0] 
-            }
-        };
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-        async function loginMicrosoft() {
-            try {
-                const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["User.Read", "Files.Read.All", "Sites.Read.All"]
-                });
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> เข้าสู่ระบบสำเร็จ: ${loginResponse.account.username}</span>`;
-                document.getElementById('btnLogin').classList.add('hidden');
-                document.getElementById('btnLoadSharePoint').classList.remove('hidden');
-                msalInstance.setActiveAccount(loginResponse.account);
-            } catch (err) {
-                console.error(err);
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold">ล็อกอินล้มเหลว: ${err.message}</span>`;
-            }
-        }
-
-        async function loadFromSharePoint() {
-            try {
-                const account = msalInstance.getActiveAccount();
-                if (!account) throw new Error("กรุณาเข้าสู่ระบบก่อน");
-
-                const tokenResponse = await msalInstance.acquireTokenSilent({
-                    scopes: ["Files.Read.All", "Sites.Read.All"],
-                    account: account
-                });
-
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังเชื่อมต่อ SharePoint...</span>`;
-                
-                const accessToken = tokenResponse.accessToken;
-                const headers = new Headers();
-                headers.append("Authorization", `Bearer ${accessToken}`);
-
-                // 1. Get Site ID
-                const siteUrl = "https://graph.microsoft.com/v1.0/sites/pttor.sharepoint.com:/sites/DistributionOperationsSection2";
-                const siteRes = await fetch(siteUrl, { headers });
-                if (!siteRes.ok) throw new Error("ไม่พบ SharePoint Site");
-                const siteData = await siteRes.json();
-                const siteId = siteData.id;
-
-                // 2. Get Drives (Document Libraries)
-                const drivesRes = await fetch(`https://graph.microsoft.com/v1.0/sites/${siteId}/drives`, { headers });
-                if (!drivesRes.ok) throw new Error("เข้าถึง Drives ไม่ได้");
-                const drivesData = await drivesRes.json();
-                
-                let targetDriveId = null;
-                for (const drive of drivesData.value) {
-                    if (drive.name === "เอกสาร" || drive.name === "Documents") {
-                        targetDriveId = drive.id;
-                        break;
-                    }
-                }
-                if (!targetDriveId && drivesData.value.length > 0) {
-                    targetDriveId = drivesData.value[0].id;
-                }
-                if (!targetDriveId) throw new Error("ไม่พบพื้นที่เก็บไฟล์ (Drive)");
-
-                // 3. Get Folder Children
-                const folderPath = "Distribution Operations Section/Marine Team/report/Marine Report_New";
-                const folderUrl = `https://graph.microsoft.com/v1.0/drives/${targetDriveId}/root:/${folderPath}:/children`;
-                const folderRes = await fetch(folderUrl, { headers });
-                
-                if (!folderRes.ok) throw new Error("ไม่พบโฟลเดอร์ Marine Report_New");
-                const folderData = await folderRes.json();
-
-                const excelItems = folderData.value.filter(item => 
-                    item.name.endsWith('.xlsm') || item.name.endsWith('.xlsx')
-                );
-
-                if (excelItems.length > 0) {
-                    masterData = [];
-                    document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> พบ ${excelItems.length} ไฟล์ กำลังอ่านข้อมูล...</span>`;
-                    await processSharePointFiles(excelItems, accessToken);
+        function loadFromFirebase() {
+            document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังโหลดข้อมูลจาก Firebase...</span>`;
+            
+            db.ref('vef_data').once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    masterData = snapshot.val();
+                    
+                    const vesselsSet = new Set();
+                    masterData.forEach(row => {
+                        if(row['เรือ']) vesselsSet.add(String(row['เรือ']).trim());
+                    });
+                    uniqueVessels = Array.from(vesselsSet).sort();
+                    
+                    populateVesselDropdown();
+                    
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> โหลดข้อมูลจาก Cloud สำเร็จ (${masterData.length} รายการ, ${uniqueVessels.length} ลำ)</span>`;
                 } else {
-                    document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold">ไม่พบไฟล์ Excel ในโฟลเดอร์นี้</span>`;
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-slate-500 font-bold"><i class="ph ph-info"></i> ฐานข้อมูลว่างเปล่า กรุณาอัปเดตข้อมูลจากโฟลเดอร์ Excel</span>`;
                 }
-
-            } catch (err) {
-                console.error(err);
-                if (err instanceof msal.InteractionRequiredAuthError) {
-                    await msalInstance.acquireTokenPopup({ scopes: ["Files.Read.All", "Sites.Read.All"] });
-                    loadFromSharePoint();
-                } else {
-                    document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold">Error: ${err.message}</span>`;
-                }
-            }
-        }
-
-        async function processSharePointFiles(items, accessToken) {
-            let totalRows = 0;
-            let loadedFileNames = [];
-            
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-                try {
-                    document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> โหลดไฟล์ ${i+1}/${items.length} : ${item.name}...</span>`;
-                    
-                    const downloadUrl = item['@microsoft.graph.downloadUrl'];
-                    if (!downloadUrl) continue;
-
-                    const res = await fetch(downloadUrl);
-                    const arrayBuffer = await res.arrayBuffer();
-                    
-                    const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
-                    const targetSheetName = workbook.SheetNames.find(s => String(s).trim().toUpperCase() === 'DATA BASE');
-                    
-                    if (targetSheetName) {
-                        const sheet = workbook.Sheets[targetSheetName];
-                        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
-                        
-                        let headerRowIndex = -1;
-                        for (let r = 0; r < rows.length; r++) {
-                            if (rows[r] && rows[r].some(cell => String(cell).trim() === 'เรือ')) {
-                                headerRowIndex = r;
-                                break;
-                            }
-                        }
-                        
-                        if (headerRowIndex !== -1) {
-                            const headersCols = rows[headerRowIndex].map(h => h ? String(h).trim() : '');
-                            for (let r = headerRowIndex + 1; r < rows.length; r++) {
-                                const rowData = rows[r];
-                                if (!rowData || rowData.length === 0 || rowData.every(c => c === null || c === '')) continue;
-                                
-                                const rowObj = {};
-                                for (let c = 0; c < headersCols.length; c++) {
-                                    if (headersCols[c]) {
-                                        rowObj[headersCols[c]] = rowData[c];
-                                    }
-                                }
-                                
-                                if (rowObj['เรือ'] != null && String(rowObj['เรือ']).trim() !== '') {
-                                    masterData.push(rowObj);
-                                    totalRows++;
-                                }
-                            }
-                            loadedFileNames.push(item.name);
-                        }
-                    }
-                } catch (err) {
-                    console.error("Error parsing SharePoint file", item.name, err);
-                }
-            }
-            
-            const vesselsSet = new Set();
-            masterData.forEach(row => vesselsSet.add(String(row['เรือ']).trim()));
-            uniqueVessels = Array.from(vesselsSet).sort();
-            
-            populateVesselDropdown();
-            
-            if (masterData.length > 0) {
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> โหลดจาก Cloud สำเร็จ (${totalRows} รายการ, ${uniqueVessels.length} ลำ) จาก ${loadedFileNames.length} ไฟล์</span>`;
-            } else {
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold"><i class="ph ph-warning"></i> ไม่พบข้อมูลเรือ (ตรวจหาหัวตาราง "เรือ")</span>`;
-            }
+            }).catch((error) => {
+                console.error("Firebase error: ", error);
+                document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold">เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล</span>`;
+            });
         }
 
         /* -----------------------------------------------------------
-           FILE SYSTEM ACCESS API (LOCAL FALLBACK)
+           FILE SYSTEM ACCESS API (LOCAL EXCEL PARSING & UPLOAD)
            ----------------------------------------------------------- */
         async function selectDatabaseFolder() {
             try {
@@ -698,7 +569,11 @@
                         }
                         
                         if (headerRowIndex !== -1) {
-                            const headers = rows[headerRowIndex].map(h => h ? String(h).trim() : '');
+                            const headers = rows[headerRowIndex].map(h => {
+                                if (!h) return '';
+                                let str = String(h).trim();
+                                return str.replace(/[.#$/\[\]]/g, '_');
+                            });
                             
                             // แปลงข้อมูลที่เหลือให้เป็น Object โดยอิงจาก Header ที่หาเจอ
                             for (let r = headerRowIndex + 1; r < rows.length; r++) {
@@ -709,7 +584,13 @@
                                 const rowObj = {};
                                 for (let c = 0; c < headers.length; c++) {
                                     if (headers[c]) {
-                                        rowObj[headers[c]] = rowData[c];
+                                        let cellVal = rowData[c];
+                                        // Convert Date objects to ISO string for Firebase compatibility
+                                        if (cellVal instanceof Date) {
+                                            // adjust timezone offset to keep local date if needed, but ISO string is fine for date-only
+                                            cellVal = new Date(cellVal.getTime() - (cellVal.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                                        }
+                                        rowObj[headers[c]] = cellVal;
                                     }
                                 }
                                 
@@ -735,34 +616,42 @@
             populateVesselDropdown();
             
             if (masterData.length > 0) {
-                document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> โหลดข้อมูลสำเร็จ (${totalRows} รายการ, ${uniqueVessels.length} ลำเรือ) จาก ${loadedFileNames.length} ไฟล์</span>`;
+                document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังอัปโหลดข้อมูลขึ้น Firebase...</span>`;
+                try {
+                    await db.ref('vef_data').set(masterData);
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> อัปเดตข้อมูลขึ้น Cloud สำเร็จ (${totalRows} รายการ, ${uniqueVessels.length} ลำเรือ) จาก ${loadedFileNames.length} ไฟล์</span>`;
+                } catch (err) {
+                    console.error("Firebase upload error:", err);
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> โหลดจากไฟล์สำเร็จ แต่อัปโหลดขึ้น Cloud ล้มเหลว (${err.message})</span>`;
+                }
             } else {
                 document.getElementById('dbStatusText').innerHTML = `<span class="text-red-500 font-bold"><i class="ph ph-warning"></i> ไม่พบข้อมูลเรือ (กรุณาตรวจหาหัวตารางคำว่า "เรือ" ในชีท DATA BASE)</span>`;
             }
         }
 
         function populateVesselDropdown() {
-            const select = document.getElementById('vesselSelect');
-            const currentVal = select.value;
+            const datalist = document.getElementById('vesselList');
+            const input = document.getElementById('vesselSelect');
+            const currentVal = input.value;
             
-            select.innerHTML = '<option value="">-- เลือกเรือ --</option>';
+            datalist.innerHTML = '';
             uniqueVessels.forEach(v => {
                 const opt = document.createElement('option');
                 opt.value = v;
-                opt.textContent = v;
-                select.appendChild(opt);
+                datalist.appendChild(opt);
             });
             
-            select.disabled = false;
-            if (uniqueVessels.includes(currentVal)) {
-                select.value = currentVal;
-            }
+            input.disabled = false;
         }
 
         function formatDate(dateObj) {
             if (!dateObj) return '';
-            if (dateObj instanceof Date && !isNaN(dateObj)) {
-                return dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            let d = dateObj;
+            if (typeof d === 'string') {
+                d = new Date(d);
+            }
+            if (d instanceof Date && !isNaN(d)) {
+                return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
             }
             return String(dateObj);
         }
@@ -790,7 +679,7 @@
                 document.getElementById('headerDate').value = formatDate(latest['Load Date']);
                 document.getElementById('headerFrom').value = latest['From'] || '';
                 document.getElementById('headerTo').value = latest['TO'] || '';
-                document.getElementById('headerProduct').value = latest['Material Desc.'] || '';
+                document.getElementById('headerProduct').value = latest['Material Desc_'] || latest['Material Desc.'] || '';
                 document.getElementById('printVesselName').textContent = ` - ${vesselName}`;
             }
 
@@ -804,7 +693,7 @@
                 let shoreVal, vesselVal;
                 
                 if (currentOperation === 'load') {
-                    shoreVal = row['B/L'];
+                    shoreVal = row['B_L'] !== undefined ? row['B_L'] : row['B/L'];
                     vesselVal = row['เรือต้นทาง'];
                 } else {
                     shoreVal = row['Outturn'];
@@ -814,7 +703,7 @@
                 dataStore[currentOperation][index].date = formatDate(row['Load Date']);
                 dataStore[currentOperation][index].from = row['From'] || '';
                 dataStore[currentOperation][index].to = row['TO'] || '';
-                dataStore[currentOperation][index].product = row['Material Desc.'] || '';
+                dataStore[currentOperation][index].product = row['Material Desc_'] || row['Material Desc.'] || '';
 
                 document.getElementById(`date_${index+1}`).value = dataStore[currentOperation][index].date;
                 document.getElementById(`from_${index+1}`).value = dataStore[currentOperation][index].from;
@@ -1062,6 +951,7 @@
         window.onload = () => {
             initTable(); switchOperation('load'); switchCalcMode('toShore');
             document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            loadFromFirebase();
         };
     </script>
 </body>
