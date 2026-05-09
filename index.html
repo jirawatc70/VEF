@@ -188,6 +188,30 @@
 </head>
 <body id="appBody" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col theme-transition">
 
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-100 text-brand-600 mb-6">
+                <i class="ph ph-lock-key text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">VEF System</h2>
+            <p class="text-sm text-slate-500 mb-6">กรุณาใส่รหัสผ่านเพื่อเข้าใช้งานระบบ</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <input type="password" id="passwordInput" placeholder="รหัสผ่าน" class="w-full text-center text-lg border border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 transition" onkeypress="if(event.key === 'Enter') checkPassword()">
+                    <p id="loginError" class="text-red-500 text-xs mt-2 hidden">รหัสผ่านไม่ถูกต้อง</p>
+                </div>
+                <button onclick="checkPassword()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md">
+                    เข้าสู่ระบบ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container (Hidden initially) -->
+    <div id="mainAppContainer" class="flex flex-col min-h-screen opacity-0 hidden transition-opacity duration-500">
+
     <!-- Header (ซ่อนตอนปริ้น) -->
     <header id="appHeader" class="bg-brand-900 text-white shadow-md theme-transition no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -949,10 +973,41 @@
         }
 
         window.onload = () => {
-            initTable(); switchOperation('load'); switchCalcMode('toShore');
-            document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-            loadFromFirebase();
+            if (sessionStorage.getItem('vefLoggedIn') === 'true') {
+                showApp();
+            } else {
+                document.getElementById('passwordInput').focus();
+            }
         };
+
+        function checkPassword() {
+            const pwd = document.getElementById('passwordInput').value;
+            if (pwd === '2903') {
+                sessionStorage.setItem('vefLoggedIn', 'true');
+                showApp();
+            } else {
+                const err = document.getElementById('loginError');
+                err.classList.remove('hidden');
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function showApp() {
+            document.getElementById('loginOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainAppContainer').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('mainAppContainer').classList.remove('opacity-0');
+                }, 50);
+                
+                initTable(); switchOperation('load'); switchCalcMode('toShore');
+                document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                loadFromFirebase();
+            }, 300);
+        }
     </script>
+    </div> <!-- End Main App Container -->
 </body>
 </html>
