@@ -13,6 +13,11 @@
     <!-- SheetJS for Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- Choices.js for Multi-select -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/choices.js/10.2.0/choices.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/choices.js/10.2.0/choices.min.js"></script>
+
+    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
@@ -53,6 +58,26 @@
         
         .theme-transition { transition: all 0.3s ease; }
 
+        /* Custom dropdown arrow for Choices.js */
+        .choices[data-type*="select-multiple"]::after {
+            content: "";
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            margin-top: -2px;
+            pointer-events: none;
+            border-style: solid;
+            border-width: 5px 5px 0 5px;
+            border-color: #64748b transparent transparent transparent;
+        }
+        .choices.is-open[data-type*="select-multiple"]::after {
+            border-width: 0 5px 5px 5px;
+            border-color: transparent transparent #64748b transparent;
+        }
+        .choices__inner {
+            padding-right: 30px !important;
+        }
+
         /* =========================================
            ULTIMATE COMPACT PRINT CSS (เรียงบนลงล่าง บีบให้จบใน 1 หน้า)
            ========================================= */
@@ -80,22 +105,8 @@
             .shadow-sm, .shadow-md { box-shadow: none !important; border: 1px solid #000 !important; border-radius: 4px !important; }
 
             /* Report Headers Print Format */
-            #dbSection { padding: 0 !important; margin-bottom: 10px !important; border: none !important; box-shadow: none !important; }
-            #dbSection > div:first-child { display: none !important; } /* Hide the DB integration title area */
+            #dbSection { display: none !important; }
             
-            .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-5 { 
-                display: flex !important; 
-                flex-direction: row !important;
-                border: 1px solid #000 !important;
-                border-radius: 4px !important;
-                gap: 0 !important;
-            }
-            .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-5 > div {
-                flex: 1 !important;
-                border-right: 1px dotted #ccc !important;
-                padding: 4px 6px !important;
-            }
-            .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-5 > div:last-child { border-right: none !important; }
             
             label { font-size: 8px !important; color: #666 !important; margin-bottom: 2px !important; }
             select, input { 
@@ -275,7 +286,7 @@
         </div>
 
         <!-- Database Control & Report Headers -->
-        <section id="dbSection" class="xl:col-span-3 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden theme-transition p-5 flex flex-col gap-4">
+        <section id="dbSection" class="xl:col-span-3 bg-white rounded-xl shadow-sm border border-slate-200 theme-transition p-5 flex flex-col gap-4">
             
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
                 <div>
@@ -301,26 +312,22 @@
                 <!-- Load Date -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">วันที่ (Load Date)</label>
-                    <input type="text" list="dateList" id="headerDate" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
-                    <datalist id="dateList"></datalist>
+                    <select id="headerDate" multiple onchange="filterVoyageHistory()" class="w-full text-sm"></select>
                 </div>
                 <!-- From -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ท่าเรือต้นทาง (From)</label>
-                    <input type="text" list="fromList" id="headerFrom" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
-                    <datalist id="fromList"></datalist>
+                    <select id="headerFrom" multiple onchange="filterVoyageHistory()" class="w-full text-sm"></select>
                 </div>
                 <!-- TO -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ปลายทาง (TO)</label>
-                    <input type="text" list="toList" id="headerTo" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
-                    <datalist id="toList"></datalist>
+                    <select id="headerTo" multiple onchange="filterVoyageHistory()" class="w-full text-sm"></select>
                 </div>
                 <!-- Product -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ชนิดน้ำมัน (Product)</label>
-                    <input type="text" list="productList" id="headerProduct" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
-                    <datalist id="productList"></datalist>
+                    <select id="headerProduct" multiple onchange="filterVoyageHistory()" class="w-full text-sm"></select>
                 </div>
             </div>
             
@@ -467,6 +474,11 @@
             </div>
         </section>
 
+        <!-- Document Footer (แสดงเฉพาะตอน Print) -->
+        <div class="print-only text-[9px] text-slate-600 font-bold tracking-wide" style="position: fixed; bottom: 0; left: 0; padding-bottom: 5px;">
+            F-บจ.ปกธ.-2400_F18 ประกาศใช้ครั้งที่ 3
+        </div>
+
     </main>
 
     <script>
@@ -488,6 +500,35 @@
         let uniqueFroms = [];
         let uniqueTos = [];
         let uniqueProducts = [];
+
+        let choicesDate, choicesFrom, choicesTo, choicesProduct;
+
+        function initMultiSelects() {
+            try {
+                const config = {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    placeholder: true,
+                    placeholderValue: "Select...",
+                    shouldSort: false,
+                    itemSelectText: '',
+                    classNames: {
+                        containerOuter: 'choices w-full text-sm',
+                        containerInner: 'choices__inner bg-slate-50 border border-slate-200 rounded-lg min-h-[38px] p-1'
+                    }
+                };
+                if (typeof Choices !== 'undefined') {
+                    choicesDate = new Choices('#headerDate', config);
+                    choicesFrom = new Choices('#headerFrom', config);
+                    choicesTo = new Choices('#headerTo', config);
+                    choicesProduct = new Choices('#headerProduct', config);
+                } else {
+                    console.warn("Choices library not loaded");
+                }
+            } catch(e) {
+                console.error("Choices init error", e);
+            }
+        }
 
         function initTable() {
             const tbody = document.getElementById('dataTableBody');
@@ -756,16 +797,6 @@
                 return dateB - dateA;
             });
 
-            // Set report headers based on latest voyage
-            if (vesselData.length > 0) {
-                const latest = vesselData[0];
-                document.getElementById('headerDate').value = formatDate(latest['Load Date']);
-                document.getElementById('headerFrom').value = latest['From'] || '';
-                document.getElementById('headerTo').value = latest['TO'] || latest['To'] || '';
-                document.getElementById('headerProduct').value = latest['Material Desc_'] || latest['Material Desc.'] || '';
-                document.getElementById('printVesselName').textContent = ` - ${vesselName}`;
-            }
-
             // Update Dropdowns for this specific vessel
             const vDates = new Set(), vFroms = new Set(), vTos = new Set(), vProds = new Set();
             vesselData.forEach(row => {
@@ -784,21 +815,38 @@
                 if (vProd) vProds.add(String(vProd).trim());
             });
 
-            const populateList = (listId, array) => {
-                const datalist = document.getElementById(listId);
-                if (!datalist) return;
-                datalist.innerHTML = '';
-                array.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    datalist.appendChild(opt);
-                });
+            const populateList = (choicesInstance, array, id) => {
+                if (choicesInstance) {
+                    choicesInstance.clearStore();
+                    choicesInstance.setChoices(
+                        array.map(val => ({ value: val, label: val })),
+                        'value',
+                        'label',
+                        true
+                    );
+                } else {
+                    // Fallback to standard select options
+                    const selectEl = document.getElementById(id);
+                    if (selectEl) {
+                        selectEl.innerHTML = '';
+                        array.forEach(val => {
+                            const opt = document.createElement('option');
+                            opt.value = val; opt.textContent = val;
+                            selectEl.appendChild(opt);
+                        });
+                    }
+                }
             };
 
-            populateList('dateList', Array.from(vDates).sort((a, b) => new Date(b) - new Date(a)));
-            populateList('fromList', Array.from(vFroms).sort());
-            populateList('toList', Array.from(vTos).sort());
-            populateList('productList', Array.from(vProds).sort());
+            populateList(choicesDate, Array.from(vDates).sort((a, b) => new Date(b) - new Date(a)), 'headerDate');
+            populateList(choicesFrom, Array.from(vFroms).sort(), 'headerFrom');
+            populateList(choicesTo, Array.from(vTos).sort(), 'headerTo');
+            populateList(choicesProduct, Array.from(vProds).sort(), 'headerProduct');
+
+            // Set report headers based on latest voyage
+            if (vesselData.length > 0) {
+                document.getElementById('printVesselName').textContent = ` - ${vesselName}`;
+            }
 
             // Get up to MAX_ROWS history
             const history = vesselData.slice(0, MAX_ROWS);
@@ -818,30 +866,36 @@
                 return dateB - dateA;
             });
 
-            const hDate = document.getElementById('headerDate').value.trim();
-            const hFrom = document.getElementById('headerFrom').value.trim();
-            const hTo = document.getElementById('headerTo').value.trim();
-            const hProduct = document.getElementById('headerProduct').value.trim();
+            const getSelectedValues = (id) => {
+                const sel = document.getElementById(id);
+                if (!sel || !sel.selectedOptions) return [];
+                return Array.from(sel.selectedOptions).map(opt => opt.value.trim());
+            };
+
+            const hDate = getSelectedValues('headerDate');
+            const hFrom = getSelectedValues('headerFrom');
+            const hTo = getSelectedValues('headerTo');
+            const hProduct = getSelectedValues('headerProduct');
 
             let historyData = vesselData.filter(row => {
                 let match = true;
-                if (hDate) {
+                if (hDate.length > 0) {
                     let rDate = row['Load Date'] || row['วันที่ Loading'] || row['วันที่'] || row['Date'];
                     if (rDate && rDate instanceof Date) rDate = formatDate(rDate);
                     else rDate = String(rDate || '').trim();
-                    if (rDate !== hDate) match = false;
+                    if (!hDate.includes(rDate)) match = false;
                 }
-                if (hFrom) {
+                if (hFrom.length > 0) {
                     let rFrom = String(row['From'] || row['ต้นทาง'] || '').trim();
-                    if (rFrom !== hFrom) match = false;
+                    if (!hFrom.includes(rFrom)) match = false;
                 }
-                if (hTo) {
+                if (hTo.length > 0) {
                     let rTo = String(row['TO'] || row['To'] || row['ปลายทาง'] || '').trim();
-                    if (rTo !== hTo) match = false;
+                    if (!hTo.includes(rTo)) match = false;
                 }
-                if (hProduct) {
+                if (hProduct.length > 0) {
                     let rProd = String(row['Material Desc_'] || row['Material Desc.'] || row['ชนิดน้ำมัน'] || row['Product'] || row['Grade'] || '').trim();
-                    if (rProd !== hProduct) match = false;
+                    if (!hProduct.includes(rProd)) match = false;
                 }
                 return match;
             });
@@ -1145,6 +1199,7 @@
                 
                 initTable(); switchOperation('load'); switchCalcMode('toShore');
                 document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                initMultiSelects();
                 loadFromFirebase();
             }, 300);
         }
