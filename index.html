@@ -133,8 +133,14 @@
                 flex-direction: row !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 20px !important;
+                gap: 15px !important;
                 padding: 4px !important;
+            }
+            #dashContainer .p-5 > div:first-child > div.vef-result-box {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 12px !important;
             }
             #dashContainer .p-5 > div:first-child p { margin: 0 !important; }
             #dashContainer .p-5 > div:first-child .mt-1 { margin-top: 0 !important; }
@@ -161,11 +167,16 @@
             .space-y-2.pt-3 > div { font-size: 11px !important; }
 
             /* Badges */
+            .text-white { color: #ffffff !important; }
+            .bg-slate-500 { background-color: #64748b !important; border: 1px solid #475569 !important; }
             .bg-emerald-100 { background-color: #dcfce7 !important; border: 1px solid #166534 !important; }
+            .bg-emerald-600 { background-color: #059669 !important; border: 1px solid #047857 !important; }
             .text-emerald-800, .text-emerald-600 { color: #166534 !important; }
             .bg-red-100 { background-color: #fee2e2 !important; border: 1px solid #991b1b !important; }
+            .bg-red-600 { background-color: #dc2626 !important; border: 1px solid #b91c1c !important; }
             .text-red-700, .text-red-800 { color: #991b1b !important; }
             .bg-green-100 { background-color: #dcfce7 !important; border: 1px solid #166534 !important; }
+            .bg-green-600 { background-color: #16a34a !important; border: 1px solid #15803d !important; }
             .text-green-700, .text-green-800 { color: #166534 !important; }
 
             /* Signatures */
@@ -290,22 +301,26 @@
                 <!-- Load Date -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">วันที่ (Load Date)</label>
-                    <input type="text" id="headerDate" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <input type="text" list="dateList" id="headerDate" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <datalist id="dateList"></datalist>
                 </div>
                 <!-- From -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ท่าเรือต้นทาง (From)</label>
-                    <input type="text" id="headerFrom" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <input type="text" list="fromList" id="headerFrom" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <datalist id="fromList"></datalist>
                 </div>
                 <!-- TO -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ปลายทาง (TO)</label>
-                    <input type="text" id="headerTo" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <input type="text" list="toList" id="headerTo" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <datalist id="toList"></datalist>
                 </div>
                 <!-- Product -->
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">ชนิดน้ำมัน (Product)</label>
-                    <input type="text" id="headerProduct" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <input type="text" list="productList" id="headerProduct" oninput="filterVoyageHistory()" onchange="filterVoyageHistory()" placeholder="-" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:border-brand-500">
+                    <datalist id="productList"></datalist>
                 </div>
             </div>
             
@@ -366,11 +381,27 @@
                 </div>
                 
                 <div class="p-5 space-y-4">
-                    <div class="text-center p-3 bg-slate-50 rounded-xl border border-slate-200">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-0.5">Final VEF Value</p>
-                        <p id="finalVefDisplay" class="text-4xl font-extrabold text-slate-800 tracking-tight">0.00000</p>
-                        <div class="mt-1">
-                            <span id="vefStatusBadge" class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-200 text-slate-600 uppercase tracking-wide border border-transparent">รอข้อมูล</span>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col items-center justify-center gap-3">
+                        <div class="w-full max-w-[220px] print:max-w-none print:w-auto print:flex-shrink-0 flex flex-col items-center justify-center text-xs">
+                            <div class="flex items-center justify-between w-full gap-4">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-wide whitespace-nowrap">Sum Qual. Vessel</span>
+                                <span class="font-bold text-slate-700 whitespace-nowrap" id="sumVessel">0</span>
+                            </div>
+                            <div class="w-full border-t border-slate-300 my-1.5"></div>
+                            <div class="flex items-center justify-between w-full gap-4">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-wide whitespace-nowrap">Sum Qual. Shore</span>
+                                <span class="font-bold text-slate-700 whitespace-nowrap" id="sumShore">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-2xl font-bold text-slate-300 print:text-slate-800 print:flex-shrink-0 leading-none">=</div>
+
+                        <div class="vef-result-box flex flex-col items-center justify-center text-center print:flex-shrink-0">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-0.5 whitespace-nowrap">Final VEF Value</p>
+                            <p id="finalVefDisplay" class="text-4xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap">0.00000</p>
+                            <div class="mt-1">
+                                <span id="vefStatusBadge" class="whitespace-nowrap inline-block px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-500 text-white border-transparent shadow-sm">รอข้อมูล</span>
+                            </div>
                         </div>
                     </div>
 
@@ -384,7 +415,7 @@
                             <p class="font-bold text-emerald-600" id="qualifyingVoyages">0</p>
                         </div>
                         <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
-                            <p class="text-slate-500 text-xs">Mean Ratio</p>
+                            <p class="text-slate-500 text-xs" id="lblMeanRatio">Mean Ratio</p>
                             <p class="font-bold text-slate-700" id="meanRatio">0.00000</p>
                         </div>
                         <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
@@ -393,16 +424,7 @@
                         </div>
                     </div>
 
-                    <div class="space-y-2 pt-3 border-t border-slate-200">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-500 font-medium">Sum Qual. Vessel:</span>
-                            <span class="font-bold text-slate-800" id="sumVessel">0</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-500 font-medium">Sum Qual. Shore:</span>
-                            <span class="font-bold text-slate-800" id="sumShore">0</span>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -462,6 +484,10 @@
         let dirHandle = null;
         let masterData = []; 
         let uniqueVessels = [];
+        let uniqueDates = [];
+        let uniqueFroms = [];
+        let uniqueTos = [];
+        let uniqueProducts = [];
 
         function initTable() {
             const tbody = document.getElementById('dataTableBody');
@@ -494,13 +520,8 @@
                 if (snapshot.exists()) {
                     masterData = snapshot.val();
                     
-                    const vesselsSet = new Set();
-                    masterData.forEach(row => {
-                        if(row['เรือ']) vesselsSet.add(String(row['เรือ']).trim());
-                    });
-                    uniqueVessels = Array.from(vesselsSet).sort();
-                    
-                    populateVesselDropdown();
+                    extractUniqueLists();
+                    populateAllDropdowns();
                     
                     document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> โหลดข้อมูลจาก Cloud สำเร็จ (${masterData.length} รายการ, ${uniqueVessels.length} ลำ)</span>`;
                 } else {
@@ -632,12 +653,9 @@
                 }
             }
             
-            // ดึงรายชื่อเรือที่ไม่ซ้ำกัน
-            const vesselsSet = new Set();
-            masterData.forEach(row => vesselsSet.add(String(row['เรือ']).trim()));
-            uniqueVessels = Array.from(vesselsSet).sort();
-            
-            populateVesselDropdown();
+            // ดึงรายชื่อเรือและข้อมูลต่างๆ ที่ไม่ซ้ำกัน
+            extractUniqueLists();
+            populateAllDropdowns();
             
             if (masterData.length > 0) {
                 document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังอัปโหลดข้อมูลขึ้น Firebase...</span>`;
@@ -653,19 +671,60 @@
             }
         }
 
-        function populateVesselDropdown() {
-            const datalist = document.getElementById('vesselList');
-            const input = document.getElementById('vesselSelect');
-            const currentVal = input.value;
-            
-            datalist.innerHTML = '';
-            uniqueVessels.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v;
-                datalist.appendChild(opt);
+        function extractUniqueLists() {
+            const vesselsSet = new Set();
+            const datesSet = new Set();
+            const fromsSet = new Set();
+            const tosSet = new Set();
+            const productsSet = new Set();
+
+            masterData.forEach(row => {
+                if (row['เรือ']) vesselsSet.add(String(row['เรือ']).trim());
+                
+                let vDate = row['Load Date'] || row['วันที่ Loading'] || row['วันที่'] || row['Date'];
+                if (vDate) {
+                    if (vDate instanceof Date) {
+                        vDate = formatDate(vDate);
+                    }
+                    datesSet.add(String(vDate).trim());
+                }
+                
+                let vFrom = row['From'] || row['ต้นทาง'];
+                if (vFrom) fromsSet.add(String(vFrom).trim());
+                
+                let vTo = row['TO'] || row['To'] || row['ปลายทาง'];
+                if (vTo) tosSet.add(String(vTo).trim());
+                
+                let vProduct = row['Material Desc_'] || row['Material Desc.'] || row['ชนิดน้ำมัน'] || row['Product'] || row['Grade'];
+                if (vProduct) productsSet.add(String(vProduct).trim());
             });
             
-            input.disabled = false;
+            uniqueVessels = Array.from(vesselsSet).sort();
+            uniqueDates = Array.from(datesSet).sort((a, b) => new Date(b) - new Date(a));
+            uniqueFroms = Array.from(fromsSet).sort();
+            uniqueTos = Array.from(tosSet).sort();
+            uniqueProducts = Array.from(productsSet).sort();
+        }
+
+        function populateAllDropdowns() {
+            const populateList = (listId, array) => {
+                const datalist = document.getElementById(listId);
+                if (!datalist) return;
+                datalist.innerHTML = '';
+                array.forEach(val => {
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    datalist.appendChild(opt);
+                });
+            };
+
+            populateList('vesselList', uniqueVessels);
+            populateList('dateList', uniqueDates);
+            populateList('fromList', uniqueFroms);
+            populateList('toList', uniqueTos);
+            populateList('productList', uniqueProducts);
+            
+            document.getElementById('vesselSelect').disabled = false;
         }
 
         function formatDate(dateObj) {
@@ -702,15 +761,96 @@
                 const latest = vesselData[0];
                 document.getElementById('headerDate').value = formatDate(latest['Load Date']);
                 document.getElementById('headerFrom').value = latest['From'] || '';
-                document.getElementById('headerTo').value = latest['TO'] || '';
+                document.getElementById('headerTo').value = latest['TO'] || latest['To'] || '';
                 document.getElementById('headerProduct').value = latest['Material Desc_'] || latest['Material Desc.'] || '';
                 document.getElementById('printVesselName').textContent = ` - ${vesselName}`;
             }
 
+            // Update Dropdowns for this specific vessel
+            const vDates = new Set(), vFroms = new Set(), vTos = new Set(), vProds = new Set();
+            vesselData.forEach(row => {
+                let vDate = row['Load Date'] || row['วันที่ Loading'] || row['วันที่'] || row['Date'];
+                if (vDate) {
+                    if (vDate instanceof Date) vDate = formatDate(vDate);
+                    vDates.add(String(vDate).trim());
+                }
+                let vFrom = row['From'] || row['ต้นทาง'];
+                if (vFrom) vFroms.add(String(vFrom).trim());
+                
+                let vTo = row['TO'] || row['To'] || row['ปลายทาง'];
+                if (vTo) vTos.add(String(vTo).trim());
+                
+                let vProd = row['Material Desc_'] || row['Material Desc.'] || row['ชนิดน้ำมัน'] || row['Product'] || row['Grade'];
+                if (vProd) vProds.add(String(vProd).trim());
+            });
+
+            const populateList = (listId, array) => {
+                const datalist = document.getElementById(listId);
+                if (!datalist) return;
+                datalist.innerHTML = '';
+                array.forEach(val => {
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    datalist.appendChild(opt);
+                });
+            };
+
+            populateList('dateList', Array.from(vDates).sort((a, b) => new Date(b) - new Date(a)));
+            populateList('fromList', Array.from(vFroms).sort());
+            populateList('toList', Array.from(vTos).sort());
+            populateList('productList', Array.from(vProds).sort());
+
             // Get up to MAX_ROWS history
             const history = vesselData.slice(0, MAX_ROWS);
 
-            // Populate Table
+            populateTableWithHistory(history);
+        }
+
+        function filterVoyageHistory() {
+            const vesselName = document.getElementById('vesselSelect').value;
+            if (!vesselName) return;
+
+            let vesselData = masterData.filter(row => String(row['เรือ']).trim() === vesselName);
+            
+            vesselData.sort((a, b) => {
+                const dateA = a['Load Date'] ? new Date(a['Load Date']) : new Date(0);
+                const dateB = b['Load Date'] ? new Date(b['Load Date']) : new Date(0);
+                return dateB - dateA;
+            });
+
+            const hDate = document.getElementById('headerDate').value.trim();
+            const hFrom = document.getElementById('headerFrom').value.trim();
+            const hTo = document.getElementById('headerTo').value.trim();
+            const hProduct = document.getElementById('headerProduct').value.trim();
+
+            let historyData = vesselData.filter(row => {
+                let match = true;
+                if (hDate) {
+                    let rDate = row['Load Date'] || row['วันที่ Loading'] || row['วันที่'] || row['Date'];
+                    if (rDate && rDate instanceof Date) rDate = formatDate(rDate);
+                    else rDate = String(rDate || '').trim();
+                    if (rDate !== hDate) match = false;
+                }
+                if (hFrom) {
+                    let rFrom = String(row['From'] || row['ต้นทาง'] || '').trim();
+                    if (rFrom !== hFrom) match = false;
+                }
+                if (hTo) {
+                    let rTo = String(row['TO'] || row['To'] || row['ปลายทาง'] || '').trim();
+                    if (rTo !== hTo) match = false;
+                }
+                if (hProduct) {
+                    let rProd = String(row['Material Desc_'] || row['Material Desc.'] || row['ชนิดน้ำมัน'] || row['Product'] || row['Grade'] || '').trim();
+                    if (rProd !== hProduct) match = false;
+                }
+                return match;
+            });
+
+            const history = historyData.slice(0, MAX_ROWS);
+            populateTableWithHistory(history);
+        }
+
+        function populateTableWithHistory(history) {
             clearAllData(true); // clear existing inputs without confirming
             
             history.forEach((row, index) => {
@@ -777,6 +917,7 @@
             
             document.getElementById('thRatio').textContent = isLoad ? "VLR Ratio" : "VDR Ratio";
             document.getElementById('thShore').textContent = isLoad ? "Shore (B/L)" : "Shore (Outturn)";
+            document.getElementById('lblMeanRatio').textContent = isLoad ? "Mean Ratio VLR" : "Mean Ratio VDR";
             
             document.getElementById('dashHeader').className = `px-5 py-3 border-b flex justify-between items-center theme-transition ${isLoad ? 'border-brand-100 bg-brand-50' : 'border-discharge-100 bg-discharge-50'}`;
             document.getElementById('dashTitleText').className = `font-bold text-sm uppercase tracking-wide theme-transition ${isLoad ? 'text-brand-900' : 'text-discharge-900'}`;
@@ -884,7 +1025,7 @@
             dTot.textContent = voyages.length;
             if (voyages.length === 0) {
                 dQual.textContent = '0'; dMean.textContent = '0.00000'; dLim.textContent = '0.00000 - 0.00000'; dSumV.textContent = '0'; dSumS.textContent = '0'; dFin.textContent = '0.00000';
-                setBadge('รอข้อมูล', 'bg-slate-200 text-slate-600 border-transparent');
+                setBadge('รอข้อมูล', 'bg-slate-500 text-white border-transparent shadow-sm');
                 vefData = { isValid: false, vefValue: 0 };
                 calculateSimulation(); return;
             }
@@ -898,10 +1039,10 @@
             voyages.forEach(v => {
                 const stEl = document.getElementById(`status_${v.index}`);
                 if (v.ratio >= lLim && v.ratio <= uLim) {
-                    stEl.innerHTML = '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-100 text-green-700 border border-green-300">Qualify</span>';
+                    stEl.innerHTML = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white border border-green-700 shadow-sm">Qualify</span>';
                     qCount++; sumV += v.vessel; sumS += v.shore;
                 } else {
-                    stEl.innerHTML = '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-700 border border-red-300">Outlier</span>';
+                    stEl.innerHTML = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white border border-red-700 shadow-sm">Outlier</span>';
                 }
             });
 
@@ -912,11 +1053,11 @@
             if (qCount >= 5) {
                 const fVEF = sumV / sumS;
                 dFin.textContent = fVEF.toFixed(5);
-                setBadge('VEF ผ่านเกณฑ์', 'bg-emerald-100 text-emerald-800 border-emerald-300');
+                setBadge('VEF ผ่านเกณฑ์', 'bg-emerald-600 text-white border-emerald-700 shadow-sm');
                 vefData = { isValid: true, vefValue: fVEF };
             } else {
                 dFin.textContent = 'INVALID';
-                setBadge('ข้อมูลไม่พอ (Min 5)', 'bg-red-100 text-red-700 border-red-300');
+                setBadge('ข้อมูลไม่พอ (Min 5)', 'bg-red-600 text-white border-red-700 shadow-sm');
                 vefData = { isValid: false, vefValue: 0 };
             }
             calculateSimulation();
@@ -924,7 +1065,7 @@
 
         function setBadge(txt, cls) {
             const b = document.getElementById('vefStatusBadge');
-            b.className = `px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wide border ${cls}`;
+            b.className = `px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wide border whitespace-nowrap inline-block ${cls}`;
             b.textContent = txt;
         }
 
