@@ -574,9 +574,9 @@
                             <i class="ph ph-calculator"></i> หมวดที่ 5: การนำไปใช้ (Simulation / Application)
                         </h3>
                         <ul class="space-y-3">
-                            <li><strong class="text-slate-800">Calculated Shore (แคลคูเลท-ชอร์):</strong>
+                            <li><strong class="text-slate-800">CAL.(Vessel / VEF) (แคลคูเลท-ชอร์):</strong>
                                 ปริมาณฝั่งจำลอง (หาได้จาก: เอาตัวเลขเรือไป หาร VEF)</li>
-                            <li><strong class="text-slate-800">Calculated Vessel (แคลคูเลท-เวสเซล):</strong>
+                            <li><strong class="text-slate-800">CAL.(Shore × VEF) (แคลคูเลท-เวสเซล):</strong>
                                 ปริมาณเรือจำลอง (หาได้จาก: เอาตัวเลขฝั่งไป คูณ VEF)</li>
                             <li><strong class="text-slate-800">Loss / Gain (ลอส / เกน):</strong> น้ำมันขาดหาย /
                                 น้ำมันเกิน (จากการสูบถ่าย)</li>
@@ -691,10 +691,12 @@
                                                 class="ph-fill ph-arrow-circle-down text-brand-600"></i> โหลดลง (Load)
                                         </h3>
                                         <p class="text-sm text-slate-600 mb-2">ใช้เมื่อ
-                                            <strong>จ่ายน้ำมันจากฝั่งลงเรือ</strong></p>
+                                            <strong>จ่ายน้ำมันจากฝั่งลงเรือ</strong>
+                                        </p>
                                         <p
                                             class="text-xs bg-white text-brand-900 px-3 py-2 rounded-lg border border-brand-100 shadow-sm">
-                                            <strong>สูตร:</strong> Vessel TCV-OBQ / Shore B/L</p>
+                                            <strong>สูตร:</strong> Vessel TCV-OBQ / Shore B/L
+                                        </p>
                                     </div>
                                     <div
                                         class="border border-discharge-200 bg-discharge-50 p-4 rounded-xl relative overflow-hidden">
@@ -704,10 +706,12 @@
                                                 class="ph-fill ph-arrow-circle-up text-discharge-600"></i> จ่ายออก
                                             (Discharge)</h3>
                                         <p class="text-sm text-slate-600 mb-2">ใช้เมื่อ
-                                            <strong>สูบน้ำมันจากเรือขึ้นฝั่ง</strong></p>
+                                            <strong>สูบน้ำมันจากเรือขึ้นฝั่ง</strong>
+                                        </p>
                                         <p
                                             class="text-xs bg-white text-discharge-900 px-3 py-2 rounded-lg border border-discharge-100 shadow-sm">
-                                            <strong>สูตร:</strong> Vessel TCV-ROB / Shore Outturn</p>
+                                            <strong>สูตร:</strong> Vessel TCV-ROB / Shore Outturn
+                                        </p>
                                     </div>
                                 </div>
                                 <div
@@ -754,7 +758,8 @@
                                         <li>เตรียมไฟล์ Excel (<code class="bg-slate-100 px-1 rounded">.xlsx</code> หรือ
                                             <code class="bg-slate-100 px-1 rounded">.xlsm</code>) ต้องมีชีทชื่อ
                                             <strong>"DATA BASE"</strong> และหัวตารางต้องมีคอลัมน์ชื่อ
-                                            <strong>"เรือ"</strong></li>
+                                            <strong>"เรือ"</strong>
+                                        </li>
                                         <li>กดปุ่ม <span
                                                 class="bg-blue-600 text-white px-2 py-1 rounded text-xs shadow-sm mx-1"><i
                                                     class="ph-bold ph-folder-open"></i> อัปเดตข้อมูลจากโฟลเดอร์
@@ -795,19 +800,23 @@
                                         <div
                                             class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
                                             <span><i class="ph-bold ph-calendar-blank mr-1"></i> Load Date</span> <i
-                                                class="ph-bold ph-caret-down"></i></div>
+                                                class="ph-bold ph-caret-down"></i>
+                                        </div>
                                         <div
                                             class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
                                             <span><i class="ph-bold ph-map-pin mr-1"></i> From</span> <i
-                                                class="ph-bold ph-caret-down"></i></div>
+                                                class="ph-bold ph-caret-down"></i>
+                                        </div>
                                         <div
                                             class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
                                             <span><i class="ph-bold ph-flag-checkered mr-1"></i> To</span> <i
-                                                class="ph-bold ph-caret-down"></i></div>
+                                                class="ph-bold ph-caret-down"></i>
+                                        </div>
                                         <div
                                             class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
                                             <span><i class="ph-bold ph-drop mr-1"></i> Product</span> <i
-                                                class="ph-bold ph-caret-down"></i></div>
+                                                class="ph-bold ph-caret-down"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -828,7 +837,8 @@
                                         <li><strong>การแก้ไข:</strong> คลิกที่ช่อง Shore หรือ Vessel
                                             เพื่อพิมพ์แก้ไขตัวเลขได้เอง</li>
                                         <li><strong>อัตโนมัติ:</strong> ระบบจะคำนวณ <strong>Ratio</strong> และประเมิน
-                                            <strong>Status</strong> ทันที</li>
+                                            <strong>Status</strong> ทันที
+                                        </li>
                                     </ul>
                                     <div class="flex gap-2 text-xs pt-2">
                                         <span class="bg-green-600 text-white px-2 py-1 rounded shadow-sm">Qualify
@@ -851,7 +861,8 @@
                                         <li><i class="ph-bold ph-check text-brand-500 mr-1"></i> <strong>Total
                                                 Voyages:</strong> เที่ยวเรือทั้งหมด</li>
                                         <li><i class="ph-bold ph-check text-brand-500 mr-1"></i>
-                                            <strong>Qualifying:</strong> เที่ยวที่ผ่านเกณฑ์ (±0.0030)</li>
+                                            <strong>Qualifying:</strong> เที่ยวที่ผ่านเกณฑ์ (±0.0030)
+                                        </li>
                                         <li><i class="ph-bold ph-check text-brand-500 mr-1"></i> <strong>Final
                                                 VEF:</strong> ค่า VEF สุทธิแบบ Volume-Weighted</li>
                                     </ul>
@@ -912,7 +923,8 @@
                                         <p class="font-bold text-brand-100">การแสดงผลในรายงาน PDF</p>
                                         <p class="text-brand-200/80">หากต้องการให้ผลการจำลองนี้ปรากฏในเอกสารที่จะปรินต์
                                             ให้ติ๊ก <i class="ph-bold ph-check-square text-brand-400 inline"></i>
-                                            <strong>"แสดงตารางจำลองปริมาณใน PDF"</strong> ที่ด้านล่างของเครื่องมือ</p>
+                                            <strong>"แสดงตารางจำลองปริมาณใน PDF"</strong> ที่ด้านล่างของเครื่องมือ
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -971,7 +983,8 @@
                                         class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                                         <div
                                             class="bg-slate-800 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-trash"></i></div>
+                                            <i class="ph-bold ph-trash"></i>
+                                        </div>
                                         <div>
                                             <p class="font-bold text-sm text-slate-800">ล้างข้อมูล</p>
                                             <p class="text-xs text-slate-500">ล้างตารางและตัวกรอง</p>
@@ -981,7 +994,8 @@
                                         class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                                         <div
                                             class="bg-brand-600 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-info"></i></div>
+                                            <i class="ph-bold ph-info"></i>
+                                        </div>
                                         <div>
                                             <p class="font-bold text-sm text-slate-800">คู่มือ</p>
                                             <p class="text-xs text-slate-500">เปิดหน้าต่างคู่มือฉบับย่อ</p>
@@ -991,7 +1005,8 @@
                                         class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                                         <div
                                             class="bg-brand-600 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-book-open"></i></div>
+                                            <i class="ph-bold ph-book-open"></i>
+                                        </div>
                                         <div>
                                             <p class="font-bold text-sm text-slate-800">คำศัพท์</p>
                                             <p class="text-xs text-slate-500">พจนานุกรมคำศัพท์ VEF</p>
@@ -1111,7 +1126,7 @@
                                     <th class="px-4 py-2 text-left">Product</th>
                                     <th class="px-4 py-2 text-right" id="printSimInputLabel">Vessel(BBLS)</th>
                                     <th class="px-4 py-2 text-center">Final VEF</th>
-                                    <th class="px-4 py-2 text-right" id="printSimOutputLabel">Calculated Shore</th>
+                                    <th class="px-4 py-2 text-right" id="printSimOutputLabel">CAL.(Vessel / VEF)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -1916,16 +1931,16 @@
                 const pLblI = document.getElementById('printSimInputLabel'), pLblO = document.getElementById('printSimOutputLabel');
                 if (currentCalcMode === 'toShore') {
                     lblI.textContent = currentOperation === 'load' ? 'ปริมาณจากเรือ (TCV-OBQ)' : 'ปริมาณจากเรือ (TCV-ROB)';
-                    lblO.textContent = 'Calculated Shore';
+                    lblO.textContent = 'CAL.(Vessel / VEF)';
                     fText.textContent = '* สูตร: Vessel / VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Vessel(TCV-OBQ)' : 'Vessel(TCV-ROB)';
-                    if (pLblO) pLblO.textContent = 'Calculated Shore';
+                    if (pLblO) pLblO.textContent = 'CAL.(Vessel / VEF)';
                 } else {
                     lblI.textContent = currentOperation === 'load' ? 'ปริมาณจากฝั่ง (B/L)' : 'ปริมาณจากฝั่ง (Outturn)';
-                    lblO.textContent = 'Calculated Vessel';
+                    lblO.textContent = 'CAL.(Shore × VEF)';
                     fText.textContent = '* สูตร: Shore × VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Bill of Lading' : 'Outturn';
-                    if (pLblO) pLblO.textContent = 'Calculated Vessel';
+                    if (pLblO) pLblO.textContent = 'CAL.(Shore × VEF)';
                 }
             }
 
@@ -2064,7 +2079,7 @@
 
                 const iVal = parseFloat(inputValStr);
                 const inputFormatted = (!isNaN(iVal) && iVal > 0) ? formatNumberWithCommas(inputValStr) : '-';
-                const resultFormatted = resultVal > 0 ? formatDisplayNumber(resultVal, 2) : '-';
+                const resultFormatted = resultVal > 0 ? formatDisplayNumber(Math.round(resultVal), 0) : '-';
                 const vefFormatted = vefData.isValid ? vefData.vefValue.toFixed(5) : '-';
 
                 if (document.getElementById('printSimVessel')) document.getElementById('printSimVessel').textContent = vesselName;
