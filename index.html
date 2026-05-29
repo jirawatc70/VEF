@@ -1130,16 +1130,25 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                <tr class="hover:bg-slate-50 transition-colors group">
-                                    <td class="px-4 py-2 text-left" id="printSimVessel"></td>
-                                    <td class="px-4 py-2 text-left" id="printSimDate"></td>
-                                    <td class="px-4 py-2 text-left" id="printSimFrom"></td>
-                                    <td class="px-4 py-2 text-left" id="printSimTo"></td>
-                                    <td class="px-4 py-2 text-left" id="printSimProduct"></td>
-                                    <td class="px-4 py-2 text-right" id="printSimInput"></td>
-                                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium"
-                                        id="printSimVEF"></td>
-                                    <td class="px-4 py-2 text-right font-bold text-brand-700" id="printSimOutput"></td>
+                                <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow1">
+                                    <td class="px-4 py-2 text-left" id="printSimVessel1"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimDate1"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimFrom1"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimTo1"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimProduct1"></td>
+                                    <td class="px-4 py-2 text-right" id="printSimInput1"></td>
+                                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimVEF1"></td>
+                                    <td class="px-4 py-2 text-right font-bold text-brand-700" id="printSimOutput1"></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow2">
+                                    <td class="px-4 py-2 text-left" id="printSimVessel2"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimDate2"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimFrom2"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimTo2"></td>
+                                    <td class="px-4 py-2 text-left" id="printSimProduct2"></td>
+                                    <td class="px-4 py-2 text-right" id="printSimInput2"></td>
+                                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimVEF2"></td>
+                                    <td class="px-4 py-2 text-right font-bold text-brand-700" id="printSimOutput2"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1235,19 +1244,21 @@
                         <h2 class="font-bold text-slate-700 text-sm uppercase tracking-wide">Voyage History (Last 20)
                         </h2>
                     </div>
-                    <div class="overflow-x-auto flex-grow">
-                        <table class="w-full text-sm text-left whitespace-nowrap">
-                            <thead class="text-xs text-slate-500 bg-slate-50 uppercase sticky top-0 z-10 shadow-sm">
+                    <div class="overflow-x-auto flex-grow w-full">
+                        <table class="w-full text-xs text-left whitespace-nowrap">
+                            <thead class="text-[10px] text-slate-500 bg-slate-50 uppercase sticky top-0 z-10 shadow-sm">
                                 <tr>
-                                    <th class="px-4 py-2 text-center w-12">#</th>
-                                    <th class="px-4 py-2 text-left">Date</th>
-                                    <th class="px-4 py-2 text-left">From</th>
-                                    <th class="px-4 py-2 text-left">To</th>
-                                    <th class="px-4 py-2 text-left">Product</th>
-                                    <th class="px-4 py-2 text-right" id="thShore">Shore (bbls)</th>
-                                    <th class="px-4 py-2 text-right" id="thVessel">Vessel (bbls)</th>
-                                    <th class="px-4 py-2 text-center" id="thRatio">Ratio</th>
-                                    <th class="px-4 py-2 text-center">Status</th>
+                                    <th class="px-2 py-2 text-center w-8">#</th>
+                                    <th class="px-2 py-2 text-left">Date</th>
+                                    <th class="px-2 py-2 text-left">From</th>
+                                    <th class="px-2 py-2 text-left">To</th>
+                                    <th class="px-2 py-2 text-left">Product</th>
+                                    <th class="px-2 py-2 text-right" id="thShore">Shore (bbls)</th>
+                                    <th class="px-2 py-2 text-right" id="thVessel">Vessel (bbls)</th>
+                                    <th class="px-2 py-2 text-center" id="thRatio">Ratio</th>
+                                    <th class="px-2 py-2 text-right">L/G Vol.</th>
+                                    <th class="px-2 py-2 text-center">L/G %</th>
+                                    <th class="px-2 py-2 text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="dataTableBody" class="divide-y divide-slate-100">
@@ -1302,7 +1313,7 @@
                                     Final VEF Value</p>
                                 <p id="finalVefDisplay"
                                     class="text-4xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap">
-                                    0.00000</p>
+                                    0.00000 (0.000%)</p>
                                 <div class="mt-1">
                                     <span id="vefStatusBadge"
                                         class="whitespace-nowrap inline-block px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-500 text-white border-transparent shadow-sm">รอข้อมูล</span>
@@ -1324,7 +1335,7 @@
                                 <p class="font-bold text-slate-700" id="meanRatio">0.00000</p>
                             </div>
                             <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
-                                <p class="text-slate-500 text-xs">Limit (±0.0030)</p>
+                                <p class="text-slate-500 text-xs">Limit (±0.0030/±0.30%)</p>
                                 <p class="font-bold text-slate-700 text-[10px] mt-0.5" id="limitRange">0.00000 - 0.00000
                                 </p>
                             </div>
@@ -1351,30 +1362,58 @@
                                 class="flex-1 text-[11px] py-1.5 rounded-md font-bold text-white/80 hover:text-white transition-all text-center">หาเรือ
                                 (Vessel)</button>
                         </div>
-                        <div>
-                            <label class="block text-[11px] text-white/90 mb-1 font-medium"
-                                id="lblCalcInput">ปริมาณจากเรือ (bbls)</label>
-                            <input type="text" id="calcInputValue" placeholder="0"
-                                class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none transition font-bold tracking-wide">
-                        </div>
-                        <div class="pt-1 mt-auto">
-                            <label class="block text-[10px] text-white/70 mb-1 uppercase" id="lblCalcOutput">Calculated
-                                Result</label>
-                            <div
-                                class="bg-white text-slate-800 rounded-lg px-3 py-2.5 font-bold text-xl flex items-center justify-between shadow-inner">
-                                <span id="calcResultDisplay">0.00</span>
+                        <div class="space-y-3">
+                            <!-- Sim 1 -->
+                            <div class="bg-black/10 p-2 rounded-lg">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] text-white/90 font-medium" id="lblCalcInput1">ปริมาณจากเรือ 1 (bbls)</label>
+                                    <button onclick="clearSim(1)" class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="calcInputValue1" placeholder="พิมพ์ค่า..."
+                                        class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
+                                    <i class="ph ph-arrow-right text-white/50"></i>
+                                    <div class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
+                                        <span id="calcResultDisplay1">0.00</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="simVessel1"><input type="hidden" id="simDate1"><input type="hidden" id="simFrom1"><input type="hidden" id="simTo1"><input type="hidden" id="simProduct1">
                             </div>
-                            <p class="text-[9px] text-white/60 mt-1.5 bg-black/10 inline-block px-1.5 py-0.5 rounded"
-                                id="calcFormulaText">* สูตร: Vessel / VEF</p>
+                            
+                            <!-- Sim 2 -->
+                            <div class="bg-black/10 p-2 rounded-lg">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] text-white/90 font-medium" id="lblCalcInput2">ปริมาณจากเรือ 2 (bbls)</label>
+                                    <button onclick="clearSim(2)" class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="calcInputValue2" placeholder="พิมพ์ค่า..."
+                                        class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
+                                    <i class="ph ph-arrow-right text-white/50"></i>
+                                    <div class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
+                                        <span id="calcResultDisplay2">0.00</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="simVessel2"><input type="hidden" id="simDate2"><input type="hidden" id="simFrom2"><input type="hidden" id="simTo2"><input type="hidden" id="simProduct2">
+                            </div>
+                        </div>
+
+                        <div class="pt-1 mt-auto">
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-[9px] text-white/60 bg-black/10 inline-block px-1.5 py-0.5 rounded" id="calcFormulaText">* สูตร: Vessel / VEF</p>
+                                <div class="flex gap-1">
+                                    <button onclick="autoPullSim(1)" class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง 1 แถว</button>
+                                    <button onclick="autoPullSim(2)" class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง 2 แถว</button>
+                                </div>
+                            </div>
 
                             <!-- Checkbox for PDF -->
-                            <div class="flex items-center gap-2 mt-3 pt-3 border-t border-white/10">
+                            <div class="flex items-center gap-2 pt-2 border-t border-white/10">
                                 <input type="checkbox" id="showSimInPdf"
                                     class="rounded text-brand-500 focus:ring-brand-500 w-3 h-3 cursor-pointer"
                                     onchange="togglePrintSimulation()">
                                 <label for="showSimInPdf"
-                                    class="text-[10px] text-white/90 cursor-pointer select-none">แสดงตารางจำลองปริมาณใน
-                                    PDF</label>
+                                    class="text-[10px] text-white/90 cursor-pointer select-none">แสดงตารางจำลองปริมาณใน PDF</label>
                             </div>
                         </div>
                     </div>
@@ -1458,15 +1497,17 @@
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 transition-colors group';
                     tr.innerHTML = `
-                    <td class="px-4 py-2 text-center text-slate-400 font-bold">${i}</td>
-                    <td class="px-4 py-2"><input type="text" id="date_${i}" class="w-full text-left bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'date')"></td>
-                    <td class="px-4 py-2"><input type="text" id="from_${i}" class="w-full text-left bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'from')"></td>
-                    <td class="px-4 py-2"><input type="text" id="to_${i}" class="w-full text-left bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'to')"></td>
-                    <td class="px-4 py-2 min-w-[120px]"><input type="text" id="product_${i}" class="w-full text-left bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'product')"></td>
-                    <td class="px-4 py-2"><input type="text" id="shore_${i}" class="w-full text-right bg-transparent outline-none tracking-wide" placeholder="-" oninput="handleInput(${i}, 'shore')"></td>
-                    <td class="px-4 py-2"><input type="text" id="vessel_${i}" class="w-full text-right bg-transparent outline-none tracking-wide" placeholder="-" oninput="handleInput(${i}, 'vessel')"></td>
-                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="ratio_${i}">-</td>
-                    <td class="px-4 py-2 text-center" id="status_${i}">-</td>
+                    <td class="px-2 py-2 text-center text-slate-400 font-bold">${i}</td>
+                    <td class="px-2 py-2"><input type="text" id="date_${i}" class="w-full min-w-[40px] text-left bg-transparent outline-none tracking-wide text-[10px]" placeholder="-" oninput="handleInput(${i}, 'date')"></td>
+                    <td class="px-2 py-2"><input type="text" id="from_${i}" class="w-full min-w-[40px] text-left bg-transparent outline-none tracking-wide text-[10px]" placeholder="-" oninput="handleInput(${i}, 'from')"></td>
+                    <td class="px-2 py-2"><input type="text" id="to_${i}" class="w-full min-w-[40px] text-left bg-transparent outline-none tracking-wide text-[10px]" placeholder="-" oninput="handleInput(${i}, 'to')"></td>
+                    <td class="px-2 py-2 min-w-[80px]"><input type="text" id="product_${i}" class="w-full text-left bg-transparent outline-none tracking-wide text-[10px]" placeholder="-" oninput="handleInput(${i}, 'product')"></td>
+                    <td class="px-2 py-2"><input type="text" id="shore_${i}" class="w-full min-w-[60px] text-right bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'shore')"></td>
+                    <td class="px-2 py-2"><input type="text" id="vessel_${i}" class="w-full min-w-[60px] text-right bg-transparent outline-none tracking-wide text-[11px]" placeholder="-" oninput="handleInput(${i}, 'vessel')"></td>
+                    <td class="px-2 py-2 text-center font-mono text-slate-600 font-medium text-[11px]" id="ratio_${i}">-</td>
+                    <td class="px-2 py-2 text-right font-mono text-slate-600 font-medium text-[11px]" id="lgvol_${i}">-</td>
+                    <td class="px-2 py-2 text-center font-mono text-slate-600 font-medium text-[11px]" id="lgpct_${i}">-</td>
+                    <td class="px-2 py-2 text-center text-[10px]" id="status_${i}">-</td>
                 `;
                     tbody.appendChild(tr);
                 }
@@ -1921,24 +1962,27 @@
                 if (mode === 'toShore') btnS.className = `flex-1 text-[11px] py-1.5 rounded-md font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
                 else btnV.className = `flex-1 text-[11px] py-1.5 rounded-md font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
 
-                document.getElementById('calcInputValue').value = '';
+                document.getElementById('calcInputValue1').value = '';
+                document.getElementById('calcInputValue2').value = '';
                 updateSimulationLabels();
-                calculateSimulation();
+                calculateSimulations();
             }
 
             function updateSimulationLabels() {
-                const lblI = document.getElementById('lblCalcInput'), lblO = document.getElementById('lblCalcOutput'), fText = document.getElementById('calcFormulaText');
+                const lblI1 = document.getElementById('lblCalcInput1'), lblI2 = document.getElementById('lblCalcInput2'), fText = document.getElementById('calcFormulaText');
                 const pLblI = document.getElementById('printSimInputLabel'), pLblO = document.getElementById('printSimOutputLabel');
                 if (currentCalcMode === 'toShore') {
-                    lblI.textContent = currentOperation === 'load' ? 'ปริมาณจากเรือ (TCV-OBQ)' : 'ปริมาณจากเรือ (TCV-ROB)';
-                    lblO.textContent = 'CAL.(Vessel / VEF)';
-                    fText.textContent = '* สูตร: Vessel / VEF';
+                    const textI = currentOperation === 'load' ? 'ปริมาณจากเรือ (TCV-OBQ)' : 'ปริมาณจากเรือ (TCV-ROB)';
+                    if (lblI1) lblI1.textContent = textI + ' 1';
+                    if (lblI2) lblI2.textContent = textI + ' 2';
+                    if (fText) fText.textContent = '* สูตร: Vessel / VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Vessel(TCV-OBQ)' : 'Vessel(TCV-ROB)';
                     if (pLblO) pLblO.textContent = 'CAL.(Vessel / VEF)';
                 } else {
-                    lblI.textContent = currentOperation === 'load' ? 'ปริมาณจากฝั่ง (B/L)' : 'ปริมาณจากฝั่ง (Outturn)';
-                    lblO.textContent = 'CAL.(Shore × VEF)';
-                    fText.textContent = '* สูตร: Shore × VEF';
+                    const textI = currentOperation === 'load' ? 'ปริมาณจากฝั่ง (B/L)' : 'ปริมาณจากฝั่ง (Outturn)';
+                    if (lblI1) lblI1.textContent = textI + ' 1';
+                    if (lblI2) lblI2.textContent = textI + ' 2';
+                    if (fText) fText.textContent = '* สูตร: Shore × VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Bill of Lading' : 'Outturn';
                     if (pLblO) pLblO.textContent = 'CAL.(Shore × VEF)';
                 }
@@ -1988,14 +2032,21 @@
                 const curData = dataStore[currentOperation];
                 for (let i = 0; i < MAX_ROWS; i++) {
                     const r = i + 1, sStr = curData[i].shore, vStr = curData[i].vessel;
-                    const rEl = document.getElementById(`ratio_${r}`), stEl = document.getElementById(`status_${r}`);
-                    rEl.textContent = '-'; stEl.innerHTML = '-';
+                    const rEl = document.getElementById(`ratio_${r}`),
+                        lgvolEl = document.getElementById(`lgvol_${r}`),
+                        lgpctEl = document.getElementById(`lgpct_${r}`),
+                        stEl = document.getElementById(`status_${r}`);
+                    rEl.textContent = '-'; lgvolEl.textContent = '-'; lgpctEl.textContent = '-'; stEl.innerHTML = '-';
                     if (sStr !== '' && vStr !== '') {
                         const sVal = parseFloat(sStr), vVal = parseFloat(vStr);
                         if (!isNaN(sVal) && !isNaN(vVal) && sVal > 0) {
                             const ratio = vVal / sVal;
+                            const lgvol = vVal - sVal;
+                            const lgpct = (lgvol / sVal) * 100;
                             voyages.push({ index: r, shore: sVal, vessel: vVal, ratio: ratio });
                             rEl.textContent = ratio.toFixed(5);
+                            lgvolEl.textContent = lgvol.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            lgpctEl.textContent = lgpct.toFixed(2) + '%';
                         }
                     }
                 }
@@ -2004,10 +2055,10 @@
 
                 dTot.textContent = voyages.length;
                 if (voyages.length === 0) {
-                    dQual.textContent = '0'; dMean.textContent = '0.00000'; dLim.textContent = '0.00000 - 0.00000'; dSumV.textContent = '0'; dSumS.textContent = '0'; dFin.textContent = '0.00000';
+                    dQual.textContent = '0'; dMean.textContent = '0.00000'; dLim.textContent = '0.00000 - 0.00000'; dSumV.textContent = '0'; dSumS.textContent = '0'; dFin.textContent = '0.00000 (0.000%)';
                     setBadge('รอข้อมูล', 'bg-slate-500 text-white border-transparent shadow-sm');
                     vefData = { isValid: false, vefValue: 0 };
-                    calculateSimulation(); return;
+                    calculateSimulations(); return;
                 }
 
                 const meanRatio = voyages.reduce((s, v) => s + v.ratio, 0) / voyages.length;
@@ -2032,7 +2083,7 @@
 
                 if (qCount >= 5) {
                     const fVEF = sumV / sumS;
-                    dFin.textContent = fVEF.toFixed(5);
+                    dFin.textContent = `${fVEF.toFixed(5)} (${(fVEF * 100).toFixed(3)}%)`;
                     setBadge('VEF ผ่านเกณฑ์', 'bg-emerald-600 text-white border-emerald-700 shadow-sm');
                     vefData = { isValid: true, vefValue: fVEF };
                 } else {
@@ -2040,7 +2091,7 @@
                     setBadge('ข้อมูลไม่พอ (Min 5)', 'bg-red-600 text-white border-red-700 shadow-sm');
                     vefData = { isValid: false, vefValue: 0 };
                 }
-                calculateSimulation();
+                calculateSimulations();
             }
 
             function setBadge(txt, cls) {
@@ -2049,47 +2100,116 @@
                 b.textContent = txt;
             }
 
-            document.getElementById('calcInputValue').addEventListener('input', function (e) {
-                let rStr = e.target.value.replace(/,/g, '').replace(/[^\d.]/g, ''), p = rStr.split('.');
-                if (p.length > 2) rStr = p[0] + '.' + p.slice(1).join('');
-                e.target.value = formatNumberWithCommas(rStr);
-                calculateSimulation(rStr);
-            });
+            function attachSimInputListener(id) {
+                document.getElementById(id).addEventListener('input', function (e) {
+                    let rStr = e.target.value.replace(/,/g, '').replace(/[^\d.]/g, ''), p = rStr.split('.');
+                    if (p.length > 2) rStr = p[0] + '.' + p.slice(1).join('');
+                    e.target.value = formatNumberWithCommas(rStr);
+                    calculateSimulations();
+                });
+            }
+            attachSimInputListener('calcInputValue1');
+            attachSimInputListener('calcInputValue2');
 
-            function calculateSimulation(rawStr) {
-                const rEl = document.getElementById('calcResultDisplay');
-                let iValStr = rawStr !== undefined ? rawStr : document.getElementById('calcInputValue').value.replace(/,/g, '');
-                const iVal = parseFloat(iValStr);
-                let res = 0;
-                if (vefData.isValid && !isNaN(iVal) && iVal > 0) {
-                    res = currentCalcMode === 'toShore' ? iVal / vefData.vefValue : iVal * vefData.vefValue;
-                    rEl.textContent = formatDisplayNumber(res, 2);
-                } else {
-                    rEl.textContent = '0.00';
-                }
-                updatePrintSimulationTable(iValStr, res);
+            function clearSim(idx) {
+                document.getElementById(`calcInputValue${idx}`).value = '';
+                document.getElementById(`simVessel${idx}`).value = '';
+                document.getElementById(`simDate${idx}`).value = '';
+                document.getElementById(`simFrom${idx}`).value = '';
+                document.getElementById(`simTo${idx}`).value = '';
+                document.getElementById(`simProduct${idx}`).value = '';
+                calculateSimulations();
             }
 
-            function updatePrintSimulationTable(inputValStr, resultVal) {
-                const latestDate = document.getElementById('date_1').value || '-';
-                const latestFrom = document.getElementById('from_1').value || '-';
-                const latestTo = document.getElementById('to_1').value || '-';
-                const latestProduct = document.getElementById('product_1').value || '-';
+            function autoPullSim(count) {
+                let foundRows = [];
+                for(let i = 1; i <= MAX_ROWS; i++) {
+                    const vessel = document.getElementById(`vessel_${i}`).value;
+                    const shore = document.getElementById(`shore_${i}`).value;
+                    if(vessel !== '' || shore !== '') {
+                        foundRows.push({
+                            date: document.getElementById(`date_${i}`).value || '-',
+                            from: document.getElementById(`from_${i}`).value || '-',
+                            to: document.getElementById(`to_${i}`).value || '-',
+                            product: document.getElementById(`product_${i}`).value || '-',
+                            vessel: vessel.replace(/,/g, ''),
+                            shore: shore.replace(/,/g, '')
+                        });
+                        if(foundRows.length >= count) break;
+                    }
+                }
+                
+                clearSim(1);
+                clearSim(2);
+                
                 const vesselName = document.getElementById('vesselSelect').value || '-';
+                
+                if (foundRows.length > 0) {
+                    document.getElementById('simVessel1').value = vesselName;
+                    document.getElementById('simDate1').value = foundRows[0].date;
+                    document.getElementById('simFrom1').value = foundRows[0].from;
+                    document.getElementById('simTo1').value = foundRows[0].to;
+                    document.getElementById('simProduct1').value = foundRows[0].product;
+                    let val1 = currentCalcMode === 'toShore' ? foundRows[0].vessel : foundRows[0].shore;
+                    document.getElementById('calcInputValue1').value = formatNumberWithCommas(val1);
+                }
+                
+                if (count > 1 && foundRows.length > 1) {
+                    document.getElementById('simVessel2').value = vesselName;
+                    document.getElementById('simDate2').value = foundRows[1].date;
+                    document.getElementById('simFrom2').value = foundRows[1].from;
+                    document.getElementById('simTo2').value = foundRows[1].to;
+                    document.getElementById('simProduct2').value = foundRows[1].product;
+                    let val2 = currentCalcMode === 'toShore' ? foundRows[1].vessel : foundRows[1].shore;
+                    document.getElementById('calcInputValue2').value = formatNumberWithCommas(val2);
+                }
+                calculateSimulations();
+            }
+
+            function calculateSimulations() {
+                for (let idx = 1; idx <= 2; idx++) {
+                    const rEl = document.getElementById(`calcResultDisplay${idx}`);
+                    let iValStr = document.getElementById(`calcInputValue${idx}`).value.replace(/,/g, '');
+                    const iVal = parseFloat(iValStr);
+                    let res = 0;
+                    if (vefData.isValid && !isNaN(iVal) && iVal > 0) {
+                        res = currentCalcMode === 'toShore' ? iVal / vefData.vefValue : iVal * vefData.vefValue;
+                        rEl.textContent = formatDisplayNumber(res, 2);
+                    } else {
+                        rEl.textContent = '0.00';
+                    }
+                    updatePrintSimulationRow(idx, iValStr, res);
+                }
+            }
+
+            function updatePrintSimulationRow(idx, inputValStr, resultVal) {
+                let simDate = document.getElementById(`simDate${idx}`).value || document.getElementById('date_1').value || '-';
+                let simFrom = document.getElementById(`simFrom${idx}`).value || document.getElementById('from_1').value || '-';
+                let simTo = document.getElementById(`simTo${idx}`).value || document.getElementById('to_1').value || '-';
+                let simProduct = document.getElementById(`simProduct${idx}`).value || document.getElementById('product_1').value || '-';
+                let vesselName = document.getElementById(`simVessel${idx}`).value || document.getElementById('vesselSelect').value || '-';
 
                 const iVal = parseFloat(inputValStr);
                 const inputFormatted = (!isNaN(iVal) && iVal > 0) ? formatNumberWithCommas(inputValStr) : '-';
                 const resultFormatted = resultVal > 0 ? formatDisplayNumber(Math.round(resultVal), 0) : '-';
                 const vefFormatted = vefData.isValid ? vefData.vefValue.toFixed(5) : '-';
+                
+                if (document.getElementById(`printSimRow${idx}`)) {
+                    if (!isNaN(iVal) && iVal > 0) {
+                        document.getElementById(`printSimRow${idx}`).style.display = 'table-row';
+                    } else {
+                        document.getElementById(`printSimRow${idx}`).style.display = 'none';
+                    }
+                }
 
-                if (document.getElementById('printSimVessel')) document.getElementById('printSimVessel').textContent = vesselName;
-                if (document.getElementById('printSimDate')) document.getElementById('printSimDate').textContent = latestDate;
-                if (document.getElementById('printSimFrom')) document.getElementById('printSimFrom').textContent = latestFrom;
-                if (document.getElementById('printSimTo')) document.getElementById('printSimTo').textContent = latestTo;
-                if (document.getElementById('printSimProduct')) document.getElementById('printSimProduct').textContent = latestProduct;
-                if (document.getElementById('printSimInput')) document.getElementById('printSimInput').textContent = inputFormatted;
-                if (document.getElementById('printSimVEF')) document.getElementById('printSimVEF').textContent = vefFormatted;
-                if (document.getElementById('printSimOutput')) document.getElementById('printSimOutput').textContent = resultFormatted;
+                if (document.getElementById(`printSimVessel${idx}`)) document.getElementById(`printSimVessel${idx}`).textContent = vesselName;
+                if (document.getElementById(`printSimDate${idx}`)) document.getElementById(`printSimDate${idx}`).textContent = simDate;
+                if (document.getElementById(`printSimFrom${idx}`)) document.getElementById(`printSimFrom${idx}`).textContent = simFrom;
+                if (document.getElementById(`printSimTo${idx}`)) document.getElementById(`printSimTo${idx}`).textContent = simTo;
+                if (document.getElementById(`printSimProduct${idx}`)) document.getElementById(`printSimProduct${idx}`).textContent = simProduct;
+                if (document.getElementById(`printSimInput${idx}`)) document.getElementById(`printSimInput${idx}`).textContent = inputFormatted;
+                if (document.getElementById(`printSimVEF${idx}`)) document.getElementById(`printSimVEF${idx}`).textContent = vefFormatted;
+                if (document.getElementById(`printSimOutput${idx}`)) document.getElementById(`printSimOutput${idx}`).textContent = resultFormatted;
             }
 
             function openDictionary() {
@@ -2169,7 +2289,8 @@
                         document.getElementById(`shore_${i}`).value = '';
                         document.getElementById(`vessel_${i}`).value = '';
                     }
-                    document.getElementById('calcInputValue').value = '';
+                    document.getElementById('calcInputValue1').value = '';
+                    document.getElementById('calcInputValue2').value = '';
 
                     if (!skipConfirm) {
                         document.getElementById('vesselSelect').value = '';
