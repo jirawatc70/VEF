@@ -301,8 +301,14 @@
                 margin-top: 0 !important;
             }
 
-            .text-4xl {
+            .text-4xl, #finalVefDisplay {
                 font-size: 16px !important;
+                font-weight: bold !important;
+                margin: 0 !important;
+            }
+
+            #finalVefPercentDisplay {
+                font-size: 11px !important;
                 font-weight: bold !important;
                 margin: 0 !important;
             }
@@ -1117,6 +1123,18 @@
                     </div>
                     <div class="overflow-x-auto flex-grow">
                         <table class="w-full text-sm text-left whitespace-nowrap">
+                            <colgroup>
+                                <col style="width: 12%;">
+                                <col style="width: 10%;">
+                                <col style="width: 6%;">
+                                <col style="width: 6%;">
+                                <col style="width: 15%;">
+                                <col style="width: 9%;">
+                                <col style="width: 8%;">
+                                <col style="width: 9%;">
+                                <col style="width: 9%;">
+                                <col style="width: 16%;">
+                            </colgroup>
                             <thead class="text-xs text-slate-500 bg-slate-50 uppercase sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="px-4 py-2 text-left">Vessel Name</th>
@@ -1126,6 +1144,8 @@
                                     <th class="px-4 py-2 text-left">Product</th>
                                     <th class="px-4 py-2 text-right" id="printSimInputLabel">Vessel(BBLS)</th>
                                     <th class="px-4 py-2 text-center">Final VEF</th>
+                                    <th class="px-4 py-2 text-center">Deviation %</th>
+                                    <th class="px-4 py-2 text-right">Difference</th>
                                     <th class="px-4 py-2 text-right" id="printSimOutputLabel">CAL.(Vessel / VEF)</th>
                                 </tr>
                             </thead>
@@ -1138,6 +1158,8 @@
                                     <td class="px-4 py-2 text-left" id="printSimProduct1"></td>
                                     <td class="px-4 py-2 text-right" id="printSimInput1"></td>
                                     <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimVEF1"></td>
+                                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimDev1"></td>
+                                    <td class="px-4 py-2 text-right font-mono text-slate-600 font-medium" id="printSimDiff1"></td>
                                     <td class="px-4 py-2 text-right font-bold text-brand-700" id="printSimOutput1"></td>
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow2">
@@ -1148,6 +1170,8 @@
                                     <td class="px-4 py-2 text-left" id="printSimProduct2"></td>
                                     <td class="px-4 py-2 text-right" id="printSimInput2"></td>
                                     <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimVEF2"></td>
+                                    <td class="px-4 py-2 text-center font-mono text-slate-600 font-medium" id="printSimDev2"></td>
+                                    <td class="px-4 py-2 text-right font-mono text-slate-600 font-medium" id="printSimDiff2"></td>
                                     <td class="px-4 py-2 text-right font-bold text-brand-700" id="printSimOutput2"></td>
                                 </tr>
                             </tbody>
@@ -1312,8 +1336,11 @@
                                     class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-0.5 whitespace-nowrap">
                                     Final VEF Value</p>
                                 <p id="finalVefDisplay"
-                                    class="text-4xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap">
-                                    0.00000 (0.000%)</p>
+                                    class="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap">
+                                    0.00000</p>
+                                <p id="finalVefPercentDisplay"
+                                    class="text-xs sm:text-sm font-semibold text-slate-500 mt-1 whitespace-nowrap">
+                                    (0.000% & 0.000%)</p>
                                 <div class="mt-1">
                                     <span id="vefStatusBadge"
                                         class="whitespace-nowrap inline-block px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-500 text-white border-transparent shadow-sm">รอข้อมูล</span>
@@ -2051,11 +2078,13 @@
                     }
                 }
 
-                const dTot = document.getElementById('totalVoyages'), dQual = document.getElementById('qualifyingVoyages'), dMean = document.getElementById('meanRatio'), dLim = document.getElementById('limitRange'), dSumV = document.getElementById('sumVessel'), dSumS = document.getElementById('sumShore'), dFin = document.getElementById('finalVefDisplay');
+                const dTot = document.getElementById('totalVoyages'), dQual = document.getElementById('qualifyingVoyages'), dMean = document.getElementById('meanRatio'), dLim = document.getElementById('limitRange'), dSumV = document.getElementById('sumVessel'), dSumS = document.getElementById('sumShore'), dFin = document.getElementById('finalVefDisplay'), dFinPct = document.getElementById('finalVefPercentDisplay');
 
                 dTot.textContent = voyages.length;
                 if (voyages.length === 0) {
-                    dQual.textContent = '0'; dMean.textContent = '0.00000'; dLim.textContent = '0.00000 - 0.00000'; dSumV.textContent = '0'; dSumS.textContent = '0'; dFin.textContent = '0.00000 (0.000%)';
+                    dQual.textContent = '0'; dMean.textContent = '0.00000'; dLim.textContent = '0.00000 - 0.00000'; dSumV.textContent = '0'; dSumS.textContent = '0';
+                    dFin.textContent = '0.00000';
+                    dFinPct.textContent = '(0.000% & 0.000%)';
                     setBadge('รอข้อมูล', 'bg-slate-500 text-white border-transparent shadow-sm');
                     vefData = { isValid: false, vefValue: 0 };
                     calculateSimulations(); return;
@@ -2083,11 +2112,16 @@
 
                 if (qCount >= 5) {
                     const fVEF = sumV / sumS;
-                    dFin.textContent = `${fVEF.toFixed(5)} (${(fVEF * 100).toFixed(3)}%)`;
+                    const vefPercent = fVEF * 100;
+                    const diffPercent = (fVEF - 1) * 100;
+                    const diffSign = diffPercent >= 0 ? '+' : '';
+                    dFin.textContent = fVEF.toFixed(5);
+                    dFinPct.textContent = `(${vefPercent.toFixed(3)}% & ${diffSign}${diffPercent.toFixed(3)}%)`;
                     setBadge('VEF ผ่านเกณฑ์', 'bg-emerald-600 text-white border-emerald-700 shadow-sm');
                     vefData = { isValid: true, vefValue: fVEF };
                 } else {
                     dFin.textContent = 'INVALID';
+                    dFinPct.textContent = '';
                     setBadge('ข้อมูลไม่พอ (Min 5)', 'bg-red-600 text-white border-red-700 shadow-sm');
                     vefData = { isValid: false, vefValue: 0 };
                 }
@@ -2194,6 +2228,10 @@
                 const resultFormatted = resultVal > 0 ? formatDisplayNumber(Math.round(resultVal), 0) : '-';
                 const vefFormatted = vefData.isValid ? vefData.vefValue.toFixed(5) : '-';
                 
+                const devFormatted = (vefData.isValid && !isNaN(iVal) && iVal > 0) ? (Math.abs(vefData.vefValue - 1) * 100).toFixed(3) + '%' : '-';
+                const diffVal = (vefData.isValid && !isNaN(iVal) && iVal > 0) ? Math.round(resultVal - iVal) : null;
+                const diffFormatted = diffVal !== null ? (diffVal > 0 ? '+' : '') + diffVal.toLocaleString('en-US') : '-';
+                
                 if (document.getElementById(`printSimRow${idx}`)) {
                     if (!isNaN(iVal) && iVal > 0) {
                         document.getElementById(`printSimRow${idx}`).style.display = 'table-row';
@@ -2209,6 +2247,8 @@
                 if (document.getElementById(`printSimProduct${idx}`)) document.getElementById(`printSimProduct${idx}`).textContent = simProduct;
                 if (document.getElementById(`printSimInput${idx}`)) document.getElementById(`printSimInput${idx}`).textContent = inputFormatted;
                 if (document.getElementById(`printSimVEF${idx}`)) document.getElementById(`printSimVEF${idx}`).textContent = vefFormatted;
+                if (document.getElementById(`printSimDev${idx}`)) document.getElementById(`printSimDev${idx}`).textContent = devFormatted;
+                if (document.getElementById(`printSimDiff${idx}`)) document.getElementById(`printSimDiff${idx}`).textContent = diffFormatted;
                 if (document.getElementById(`printSimOutput${idx}`)) document.getElementById(`printSimOutput${idx}`).textContent = resultFormatted;
             }
 
