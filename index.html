@@ -301,7 +301,8 @@
                 margin-top: 0 !important;
             }
 
-            .text-4xl, #finalVefDisplay {
+            .text-4xl,
+            #finalVefDisplay {
                 font-size: 16px !important;
                 font-weight: bold !important;
                 margin: 0 !important;
@@ -1152,27 +1153,67 @@
                             <tbody class="divide-y divide-slate-100">
                                 <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow1">
                                     <td class="px-2 py-1.5 text-left" id="printSimVessel1"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimDate1"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimFrom1"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimTo1"></td>
-                                    <td class="px-2 py-1.5 text-left whitespace-normal" id="printSimProduct1"></td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimDate1" list="dateList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(1, 'date', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimFrom1" list="fromList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(1, 'from', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimTo1" list="toList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(1, 'to', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left whitespace-normal">
+                                        <input type="text" id="printSimProduct1" list="productList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(1, 'product', this.value)">
+                                    </td>
                                     <td class="px-2 py-1.5 text-right" id="printSimInput1"></td>
-                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium" id="printSimVEF1"></td>
-                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium" id="printSimDev1"></td>
-                                    <td class="px-2 py-1.5 text-right font-mono text-slate-600 font-medium" id="printSimDiff1"></td>
-                                    <td class="px-2 py-1.5 text-right font-bold text-brand-700" id="printSimOutput1"></td>
+                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
+                                        id="printSimVEF1"></td>
+                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
+                                        id="printSimDev1"></td>
+                                    <td class="px-2 py-1.5 text-right font-mono text-slate-600 font-medium"
+                                        id="printSimDiff1"></td>
+                                    <td class="px-2 py-1.5 text-right font-bold text-brand-700" id="printSimOutput1">
+                                    </td>
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow2">
                                     <td class="px-2 py-1.5 text-left" id="printSimVessel2"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimDate2"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimFrom2"></td>
-                                    <td class="px-2 py-1.5 text-left" id="printSimTo2"></td>
-                                    <td class="px-2 py-1.5 text-left whitespace-normal" id="printSimProduct2"></td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimDate2" list="dateList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(2, 'date', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimFrom2" list="fromList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(2, 'from', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left">
+                                        <input type="text" id="printSimTo2" list="toList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(2, 'to', this.value)">
+                                    </td>
+                                    <td class="px-2 py-1.5 text-left whitespace-normal">
+                                        <input type="text" id="printSimProduct2" list="productList"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
+                                            placeholder="-" oninput="handleSimInputChange(2, 'product', this.value)">
+                                    </td>
                                     <td class="px-2 py-1.5 text-right" id="printSimInput2"></td>
-                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium" id="printSimVEF2"></td>
-                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium" id="printSimDev2"></td>
-                                    <td class="px-2 py-1.5 text-right font-mono text-slate-600 font-medium" id="printSimDiff2"></td>
-                                    <td class="px-2 py-1.5 text-right font-bold text-brand-700" id="printSimOutput2"></td>
+                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
+                                        id="printSimVEF2"></td>
+                                    <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
+                                        id="printSimDev2"></td>
+                                    <td class="px-2 py-1.5 text-right font-mono text-slate-600 font-medium"
+                                        id="printSimDiff2"></td>
+                                    <td class="px-2 py-1.5 text-right font-bold text-brand-700" id="printSimOutput2">
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1210,6 +1251,10 @@
                             class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:border-brand-500 transition disabled:opacity-50"
                             disabled>
                         <datalist id="vesselList"></datalist>
+                        <datalist id="dateList"></datalist>
+                        <datalist id="fromList"></datalist>
+                        <datalist id="toList"></datalist>
+                        <datalist id="productList"></datalist>
                     </div>
                     <!-- Load Date -->
                     <div>
@@ -1393,44 +1438,59 @@
                             <!-- Sim 1 -->
                             <div class="bg-black/10 p-2 rounded-lg">
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] text-white/90 font-medium" id="lblCalcInput1">ปริมาณจากเรือ 1 (bbls)</label>
-                                    <button onclick="clearSim(1)" class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
+                                    <label class="block text-[10px] text-white/90 font-medium"
+                                        id="lblCalcInput1">ปริมาณจากเรือ 1 (bbls)</label>
+                                    <button onclick="clearSim(1)"
+                                        class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <input type="text" id="calcInputValue1" placeholder="พิมพ์ค่า..."
                                         class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
                                     <i class="ph ph-arrow-right text-white/50"></i>
-                                    <div class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
+                                    <div
+                                        class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
                                         <span id="calcResultDisplay1">0.00</span>
                                     </div>
                                 </div>
-                                <input type="hidden" id="simVessel1"><input type="hidden" id="simDate1"><input type="hidden" id="simFrom1"><input type="hidden" id="simTo1"><input type="hidden" id="simProduct1">
+                                <input type="hidden" id="simVessel1"><input type="hidden" id="simDate1"><input
+                                    type="hidden" id="simFrom1"><input type="hidden" id="simTo1"><input type="hidden"
+                                    id="simProduct1">
                             </div>
-                            
+
                             <!-- Sim 2 -->
                             <div class="bg-black/10 p-2 rounded-lg">
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] text-white/90 font-medium" id="lblCalcInput2">ปริมาณจากเรือ 2 (bbls)</label>
-                                    <button onclick="clearSim(2)" class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
+                                    <label class="block text-[10px] text-white/90 font-medium"
+                                        id="lblCalcInput2">ปริมาณจากเรือ 2 (bbls)</label>
+                                    <button onclick="clearSim(2)"
+                                        class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <input type="text" id="calcInputValue2" placeholder="พิมพ์ค่า..."
                                         class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
                                     <i class="ph ph-arrow-right text-white/50"></i>
-                                    <div class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
+                                    <div
+                                        class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
                                         <span id="calcResultDisplay2">0.00</span>
                                     </div>
                                 </div>
-                                <input type="hidden" id="simVessel2"><input type="hidden" id="simDate2"><input type="hidden" id="simFrom2"><input type="hidden" id="simTo2"><input type="hidden" id="simProduct2">
+                                <input type="hidden" id="simVessel2"><input type="hidden" id="simDate2"><input
+                                    type="hidden" id="simFrom2"><input type="hidden" id="simTo2"><input type="hidden"
+                                    id="simProduct2">
                             </div>
                         </div>
 
                         <div class="pt-1 mt-auto">
                             <div class="flex justify-between items-center mb-2">
-                                <p class="text-[9px] text-white/60 bg-black/10 inline-block px-1.5 py-0.5 rounded" id="calcFormulaText">* สูตร: Vessel / VEF</p>
+                                <p class="text-[9px] text-white/60 bg-black/10 inline-block px-1.5 py-0.5 rounded"
+                                    id="calcFormulaText">* สูตร: Vessel / VEF</p>
                                 <div class="flex gap-1">
-                                    <button onclick="autoPullSim(1)" class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง 1 แถว</button>
-                                    <button onclick="autoPullSim(2)" class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง 2 แถว</button>
+                                    <button onclick="autoPullSim(1)"
+                                        class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง
+                                        1 แถว</button>
+                                    <button onclick="autoPullSim(2)"
+                                        class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง
+                                        2 แถว</button>
                                 </div>
                             </div>
 
@@ -1440,7 +1500,8 @@
                                     class="rounded text-brand-500 focus:ring-brand-500 w-3 h-3 cursor-pointer"
                                     onchange="togglePrintSimulation()">
                                 <label for="showSimInPdf"
-                                    class="text-[10px] text-white/90 cursor-pointer select-none">แสดงตารางจำลองปริมาณใน PDF</label>
+                                    class="text-[10px] text-white/90 cursor-pointer select-none">แสดงตารางจำลองปริมาณใน
+                                    PDF</label>
                             </div>
                         </div>
                     </div>
@@ -1832,6 +1893,23 @@
                 populateList(choicesTo, Array.from(vTos).sort(), 'headerTo');
                 populateList(choicesProduct, Array.from(vProds).sort(), 'headerProduct');
 
+                // Update datalists for simulation inputs to show vessel-specific options
+                const populateDatalist = (listId, array) => {
+                    const datalist = document.getElementById(listId);
+                    if (datalist) {
+                        datalist.innerHTML = '';
+                        array.forEach(val => {
+                            const opt = document.createElement('option');
+                            opt.value = val;
+                            datalist.appendChild(opt);
+                        });
+                    }
+                };
+                populateDatalist('dateList', Array.from(vDates).sort((a, b) => new Date(b) - new Date(a)));
+                populateDatalist('fromList', Array.from(vFroms).sort());
+                populateDatalist('toList', Array.from(vTos).sort());
+                populateDatalist('productList', Array.from(vProds).sort());
+
                 // Set report headers based on latest voyage
                 if (vesselData.length > 0) {
                     document.getElementById('printVesselName').textContent = ` - ${vesselName}`;
@@ -2148,19 +2226,21 @@
             function clearSim(idx) {
                 document.getElementById(`calcInputValue${idx}`).value = '';
                 document.getElementById(`simVessel${idx}`).value = '';
-                document.getElementById(`simDate${idx}`).value = '';
-                document.getElementById(`simFrom${idx}`).value = '';
-                document.getElementById(`simTo${idx}`).value = '';
-                document.getElementById(`simProduct${idx}`).value = '';
+
+                const d = document.getElementById(`simDate${idx}`); if (d) { d.value = ''; d.dataset.edited = 'false'; }
+                const f = document.getElementById(`simFrom${idx}`); if (f) { f.value = ''; f.dataset.edited = 'false'; }
+                const t = document.getElementById(`simTo${idx}`); if (t) { t.value = ''; t.dataset.edited = 'false'; }
+                const p = document.getElementById(`simProduct${idx}`); if (p) { p.value = ''; p.dataset.edited = 'false'; }
+
                 calculateSimulations();
             }
 
             function autoPullSim(count) {
                 let foundRows = [];
-                for(let i = 1; i <= MAX_ROWS; i++) {
+                for (let i = 1; i <= MAX_ROWS; i++) {
                     const vessel = document.getElementById(`vessel_${i}`).value;
                     const shore = document.getElementById(`shore_${i}`).value;
-                    if(vessel !== '' || shore !== '') {
+                    if (vessel !== '' || shore !== '') {
                         foundRows.push({
                             date: document.getElementById(`date_${i}`).value || '-',
                             from: document.getElementById(`from_${i}`).value || '-',
@@ -2169,31 +2249,35 @@
                             vessel: vessel.replace(/,/g, ''),
                             shore: shore.replace(/,/g, '')
                         });
-                        if(foundRows.length >= count) break;
+                        if (foundRows.length >= count) break;
                     }
                 }
-                
+
                 clearSim(1);
                 clearSim(2);
-                
+
                 const vesselName = document.getElementById('vesselSelect').value || '-';
-                
+
                 if (foundRows.length > 0) {
                     document.getElementById('simVessel1').value = vesselName;
-                    document.getElementById('simDate1').value = foundRows[0].date;
-                    document.getElementById('simFrom1').value = foundRows[0].from;
-                    document.getElementById('simTo1').value = foundRows[0].to;
-                    document.getElementById('simProduct1').value = foundRows[0].product;
+
+                    const d1 = document.getElementById('simDate1'); if (d1) { d1.value = foundRows[0].date; d1.dataset.edited = 'true'; }
+                    const f1 = document.getElementById('simFrom1'); if (f1) { f1.value = foundRows[0].from; f1.dataset.edited = 'true'; }
+                    const t1 = document.getElementById('simTo1'); if (t1) { t1.value = foundRows[0].to; t1.dataset.edited = 'true'; }
+                    const p1 = document.getElementById('simProduct1'); if (p1) { p1.value = foundRows[0].product; p1.dataset.edited = 'true'; }
+
                     let val1 = currentCalcMode === 'toShore' ? foundRows[0].vessel : foundRows[0].shore;
                     document.getElementById('calcInputValue1').value = formatNumberWithCommas(val1);
                 }
-                
+
                 if (count > 1 && foundRows.length > 1) {
                     document.getElementById('simVessel2').value = vesselName;
-                    document.getElementById('simDate2').value = foundRows[1].date;
-                    document.getElementById('simFrom2').value = foundRows[1].from;
-                    document.getElementById('simTo2').value = foundRows[1].to;
-                    document.getElementById('simProduct2').value = foundRows[1].product;
+
+                    const d2 = document.getElementById('simDate2'); if (d2) { d2.value = foundRows[1].date; d2.dataset.edited = 'true'; }
+                    const f2 = document.getElementById('simFrom2'); if (f2) { f2.value = foundRows[1].from; f2.dataset.edited = 'true'; }
+                    const t2 = document.getElementById('simTo2'); if (t2) { t2.value = foundRows[1].to; t2.dataset.edited = 'true'; }
+                    const p2 = document.getElementById('simProduct2'); if (p2) { p2.value = foundRows[1].product; p2.dataset.edited = 'true'; }
+
                     let val2 = currentCalcMode === 'toShore' ? foundRows[1].vessel : foundRows[1].shore;
                     document.getElementById('calcInputValue2').value = formatNumberWithCommas(val2);
                 }
@@ -2217,21 +2301,26 @@
             }
 
             function updatePrintSimulationRow(idx, inputValStr, resultVal) {
-                let simDate = document.getElementById(`simDate${idx}`).value || document.getElementById('date_1').value || '-';
-                let simFrom = document.getElementById(`simFrom${idx}`).value || document.getElementById('from_1').value || '-';
-                let simTo = document.getElementById(`simTo${idx}`).value || document.getElementById('to_1').value || '-';
-                let simProduct = document.getElementById(`simProduct${idx}`).value || document.getElementById('product_1').value || '-';
+                const dHidden = document.getElementById(`simDate${idx}`);
+                const fHidden = document.getElementById(`simFrom${idx}`);
+                const tHidden = document.getElementById(`simTo${idx}`);
+                const pHidden = document.getElementById(`simProduct${idx}`);
+
+                let simDate = (dHidden && dHidden.dataset.edited === 'true') ? dHidden.value : ((dHidden ? dHidden.value : '') || document.getElementById('date_1').value || '-');
+                let simFrom = (fHidden && fHidden.dataset.edited === 'true') ? fHidden.value : ((fHidden ? fHidden.value : '') || document.getElementById('from_1').value || '-');
+                let simTo = (tHidden && tHidden.dataset.edited === 'true') ? tHidden.value : ((tHidden ? tHidden.value : '') || document.getElementById('to_1').value || '-');
+                let simProduct = (pHidden && pHidden.dataset.edited === 'true') ? pHidden.value : ((pHidden ? pHidden.value : '') || document.getElementById('product_1').value || '-');
                 let vesselName = document.getElementById(`simVessel${idx}`).value || document.getElementById('vesselSelect').value || '-';
 
                 const iVal = parseFloat(inputValStr);
                 const inputFormatted = (!isNaN(iVal) && iVal > 0) ? formatNumberWithCommas(inputValStr) : '-';
                 const resultFormatted = resultVal > 0 ? formatDisplayNumber(Math.round(resultVal), 0) : '-';
                 const vefFormatted = vefData.isValid ? vefData.vefValue.toFixed(5) : '-';
-                
+
                 const devFormatted = (vefData.isValid && !isNaN(iVal) && iVal > 0) ? (Math.abs(vefData.vefValue - 1) * 100).toFixed(3) + '%' : '-';
                 const diffVal = (vefData.isValid && !isNaN(iVal) && iVal > 0) ? Math.round(resultVal - iVal) : null;
                 const diffFormatted = diffVal !== null ? (diffVal > 0 ? '+' : '') + diffVal.toLocaleString('en-US') : '-';
-                
+
                 if (document.getElementById(`printSimRow${idx}`)) {
                     if (!isNaN(iVal) && iVal > 0) {
                         document.getElementById(`printSimRow${idx}`).style.display = 'table-row';
@@ -2241,15 +2330,25 @@
                 }
 
                 if (document.getElementById(`printSimVessel${idx}`)) document.getElementById(`printSimVessel${idx}`).textContent = vesselName;
-                if (document.getElementById(`printSimDate${idx}`)) document.getElementById(`printSimDate${idx}`).textContent = simDate;
-                if (document.getElementById(`printSimFrom${idx}`)) document.getElementById(`printSimFrom${idx}`).textContent = simFrom;
-                if (document.getElementById(`printSimTo${idx}`)) document.getElementById(`printSimTo${idx}`).textContent = simTo;
-                if (document.getElementById(`printSimProduct${idx}`)) document.getElementById(`printSimProduct${idx}`).textContent = simProduct;
+                if (document.getElementById(`printSimDate${idx}`)) document.getElementById(`printSimDate${idx}`).value = simDate;
+                if (document.getElementById(`printSimFrom${idx}`)) document.getElementById(`printSimFrom${idx}`).value = simFrom;
+                if (document.getElementById(`printSimTo${idx}`)) document.getElementById(`printSimTo${idx}`).value = simTo;
+                if (document.getElementById(`printSimProduct${idx}`)) document.getElementById(`printSimProduct${idx}`).value = simProduct;
                 if (document.getElementById(`printSimInput${idx}`)) document.getElementById(`printSimInput${idx}`).textContent = inputFormatted;
                 if (document.getElementById(`printSimVEF${idx}`)) document.getElementById(`printSimVEF${idx}`).textContent = vefFormatted;
                 if (document.getElementById(`printSimDev${idx}`)) document.getElementById(`printSimDev${idx}`).textContent = devFormatted;
                 if (document.getElementById(`printSimDiff${idx}`)) document.getElementById(`printSimDiff${idx}`).textContent = diffFormatted;
                 if (document.getElementById(`printSimOutput${idx}`)) document.getElementById(`printSimOutput${idx}`).textContent = resultFormatted;
+            }
+
+            function handleSimInputChange(idx, field, value) {
+                const hiddenInputId = `sim${field.charAt(0).toUpperCase() + field.slice(1)}${idx}`;
+                const hiddenInput = document.getElementById(hiddenInputId);
+                if (hiddenInput) {
+                    hiddenInput.value = value;
+                    hiddenInput.dataset.edited = 'true';
+                }
+                calculateSimulations();
             }
 
             function openDictionary() {
@@ -2329,8 +2428,8 @@
                         document.getElementById(`shore_${i}`).value = '';
                         document.getElementById(`vessel_${i}`).value = '';
                     }
-                    document.getElementById('calcInputValue1').value = '';
-                    document.getElementById('calcInputValue2').value = '';
+                    clearSim(1);
+                    clearSim(2);
 
                     if (!skipConfirm) {
                         document.getElementById('vesselSelect').value = '';
@@ -2339,6 +2438,7 @@
                         document.getElementById('headerTo').value = '';
                         document.getElementById('headerProduct').value = '';
                         document.getElementById('printVesselName').textContent = '';
+                        populateAllDropdowns();
                     }
 
                     calculateVEF();
