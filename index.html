@@ -773,8 +773,7 @@
                                                 Excelในเครื่อง</span></li>
                                         <li>เบราว์เซอร์จะให้ <strong>เลือกโฟลเดอร์</strong> ที่เก็บไฟล์ (ให้กด View
                                             files และ อนุญาต/Allow)</li>
-                                        <li>ระบบจะกวาดไฟล์ Excel ทั้งหมดในโฟลเดอร์นั้น อ่านข้อมูล และอัปโหลดขึ้น Cloud
-                                            ให้อัตโนมัติ</li>
+                                        <li>ระบบจะกวาดไฟล์ Excel ทั้งหมดในโฟลเดอร์นั้น อ่านข้อมูล และอัปโหลดขึ้น Cloud โดยจะรวมข้อมูลเข้ากับข้อมูลเดิมที่มีอยู่ (ข้ามรายการที่ซ้ำกัน และเพิ่มเฉพาะรายการใหม่) ทำให้สามารถเลือกอัปเดตข้อมูลเพิ่มเข้ามาจากหลายๆ โฟลเดอร์ได้</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1233,10 +1232,14 @@
                         </h2>
                         <p class="text-xs text-slate-500 mt-0.5" id="dbStatusText">กำลังเชื่อมต่อฐานข้อมูล...</p>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
                         <button id="btnSelectFolder" onclick="selectDatabaseFolder()"
                             class="bg-blue-600 hover:bg-blue-700 text-white transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0">
                             <i class="ph ph-folder-open text-lg"></i> อัปเดตข้อมูลจากโฟลเดอร์ Excel ในเครื่อง
+                        </button>
+                        <button id="btnClearCloud" onclick="clearCloudDatabase()"
+                            class="bg-red-600 hover:bg-red-700 text-white transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm shrink-0">
+                            <i class="ph ph-trash text-lg"></i> ล้างข้อมูลบน Cloud ทั้งหมด
                         </button>
                     </div>
                 </div>
@@ -1624,6 +1627,57 @@
                 });
             }
 
+            // Function to generate a unique key for a record to prevent duplicate entries
+            function getRowKey(row) {
+                if (!row) return '';
+                const vessel = String(row['เรือ'] || '').trim();
+                
+                let dateVal = row['Load Date'] || row['วันที่ Loading'] || row['วันที่'] || row['Date'] || '';
+                if (dateVal instanceof Date) {
+                    dateVal = dateVal.toISOString().split('T')[0];
+                } else {
+                    dateVal = String(dateVal).trim();
+                }
+                
+                const fromVal = String(row['From'] || row['ต้นทาง'] || '').trim();
+                const toVal = String(row['TO'] || row['To'] || row['ปลายทาง'] || '').trim();
+                const product = String(row['Material Desc_'] || row['Material Desc.'] || row['ชนิดน้ำมัน'] || row['Product'] || row['Grade'] || '').trim();
+                
+                const shoreVal = String(row['B_L'] !== undefined ? row['B_L'] : (row['B/L'] !== undefined ? row['B/L'] : (row['Outturn'] !== undefined ? row['Outturn'] : ''))).trim();
+                const vesselVal = String(row['เรือต้นทาง'] !== undefined ? row['เรือต้นทาง'] : (row['เรือปลายทาง'] !== undefined ? row['เรือปลายทาง'] : '')).trim();
+                
+                return `${vessel}|${dateVal}|${fromVal}|${toVal}|${product}|${shoreVal}|${vesselVal}`;
+            }
+
+            async function clearCloudDatabase() {
+                if (!confirm("⚠️ คำเตือน: คุณแน่ใจหรือไม่ที่จะลบข้อมูลบน Cloud Database ทั้งหมด? การดำเนินการนี้ไม่สามารถย้อนกลับได้!")) {
+                    return;
+                }
+                
+                document.getElementById('dbStatusText').innerHTML = `<span class="text-red-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังล้างข้อมูลบน Cloud...</span>`;
+                
+                try {
+                    await db.ref('vef_data').remove();
+                    masterData = [];
+                    extractUniqueLists();
+                    populateAllDropdowns();
+                    
+                    // Reset dropdown inputs
+                    document.getElementById('vesselSelect').value = '';
+                    if (choicesDate) choicesDate.clearStore();
+                    if (choicesFrom) choicesFrom.clearStore();
+                    if (choicesTo) choicesTo.clearStore();
+                    if (choicesProduct) choicesProduct.clearStore();
+                    document.getElementById('printVesselName').textContent = '';
+                    clearAllData(true); // Clear standard input rows too
+                    
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-red-600 font-bold"><i class="ph ph-trash"></i> ล้างข้อมูลบน Cloud ทั้งหมดสำเร็จแล้ว</span>`;
+                } catch (err) {
+                    console.error("Firebase clear error:", err);
+                    document.getElementById('dbStatusText').innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> ล้างข้อมูลบน Cloud ล้มเหลว (${err.message})</span>`;
+                }
+            }
+
             /* -----------------------------------------------------------
                FILE SYSTEM ACCESS API (LOCAL EXCEL PARSING & UPLOAD)
                ----------------------------------------------------------- */
@@ -1657,7 +1711,7 @@
                     }
 
                     if (excelFiles.length > 0) {
-                        masterData = []; // ล้างข้อมูลเก่าก่อนดึงใหม่
+                        // Do not clear masterData to allow merging and deduplicating
                         document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังเตรียมอ่านไฟล์ Excel จำนวน ${excelFiles.length} ไฟล์...</span>`;
 
                         // เริ่มกระบวนการอ่านไฟล์ทีละไฟล์
@@ -1674,6 +1728,9 @@
             async function processExcelFiles(files) {
                 let totalRows = 0;
                 let loadedFileNames = [];
+                
+                // Create a Set of existing row keys to check for duplicates
+                const existingKeys = new Set(masterData.map(row => getRowKey(row)));
 
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
@@ -1730,10 +1787,14 @@
                                         }
                                     }
 
-                                    // กรองเอาเฉพาะบรรทัดที่มีชื่อเรือ
+                                    // กรองเอาเฉพาะบรรทัดที่มีชื่อเรือ และตัดรายการซ้ำออก
                                     if (rowObj['เรือ'] != null && String(rowObj['เรือ']).trim() !== '') {
-                                        masterData.push(rowObj);
-                                        totalRows++;
+                                        const rowKey = getRowKey(rowObj);
+                                        if (!existingKeys.has(rowKey)) {
+                                            masterData.push(rowObj);
+                                            existingKeys.add(rowKey);
+                                            totalRows++;
+                                        }
                                     }
                                 }
                                 loadedFileNames.push(file.name);
@@ -1752,7 +1813,7 @@
                     document.getElementById('dbStatusText').innerHTML = `<span class="text-blue-600 font-bold"><i class="ph ph-spinner animate-spin inline-block"></i> กำลังอัปโหลดข้อมูลขึ้น Firebase...</span>`;
                     try {
                         await db.ref('vef_data').set(masterData);
-                        document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> อัปเดตข้อมูลขึ้น Cloud สำเร็จ (${totalRows} รายการ, ${uniqueVessels.length} ลำเรือ) จาก ${loadedFileNames.length} ไฟล์</span>`;
+                        document.getElementById('dbStatusText').innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph ph-check-circle"></i> อัปเดตข้อมูลขึ้น Cloud สำเร็จ (${totalRows} รายการใหม่, เรือทั้งหมด ${uniqueVessels.length} ลำ) จาก ${loadedFileNames.length} ไฟล์</span>`;
                     } catch (err) {
                         console.error("Firebase upload error:", err);
                         document.getElementById('dbStatusText').innerHTML = `<span class="text-amber-600 font-bold"><i class="ph ph-warning"></i> โหลดจากไฟล์สำเร็จ แต่อัปโหลดขึ้น Cloud ล้มเหลว (${err.message})</span>`;
