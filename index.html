@@ -212,6 +212,10 @@
                 width: 100% !important;
                 text-align: left !important;
             }
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                display: none !important;
+                -webkit-appearance: none !important;
+            }
 
             /* Table Formatting */
             section {
@@ -459,585 +463,253 @@
     <!-- Main App Container (Hidden initially) -->
     <div id="mainAppContainer" class="flex flex-col min-h-screen opacity-0 hidden transition-opacity duration-500">
 
-        <!-- Dictionary Modal -->
-        <div id="dictionaryModal"
+        <!-- Help Modal (Combined Manual & Glossary & VEF Standard) -->
+        <div id="helpModal"
             class="fixed inset-0 bg-slate-900/60 z-[100] hidden items-center justify-center transition-opacity duration-300 opacity-0 no-print backdrop-blur-sm">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95"
-                id="dictModalContent">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full mx-4 max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 overflow-hidden relative"
+                id="helpModalContent">
+
                 <!-- Header -->
-                <div
-                    class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
-                            <i class="ph ph-book-bookmark text-xl"></i>
+                        <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center" id="helpModalIconContainer">
+                            <i class="ph ph-book-open text-xl" id="helpModalIcon"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-slate-800">คำศัพท์และตัวย่อในระบบ VEF</h2>
+                        <h2 class="text-lg font-bold text-slate-800">คู่มือ & เกณฑ์มาตรฐานระบบ VEF</h2>
                     </div>
-                    <button onclick="closeDictionary()"
-                        class="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50">
+                    <button onclick="closeHelpModal()"
+                        class="text-slate-400 hover:text-red-500 transition-colors p-1.5 rounded-md hover:bg-red-50">
                         <i class="ph ph-x text-xl"></i>
                     </button>
                 </div>
 
-                <!-- Content -->
-                <div class="p-6 overflow-y-auto flex-grow text-sm text-slate-600 space-y-6">
+                <!-- Tab Navigation -->
+                <div class="flex border-b border-slate-200 bg-slate-50/50">
+                    <button onclick="switchHelpTab('standard')" id="tabBtnStandard"
+                        class="flex-1 py-3 px-2 text-center font-bold text-sm border-b-2 transition-all flex items-center justify-center gap-2 border-brand-500 text-brand-600">
+                        <i class="ph ph-anchor text-lg"></i>
+                        <span>เกณฑ์มาตรฐาน VEF (API 17.9)</span>
+                    </button>
+                    <button onclick="switchHelpTab('manual')" id="tabBtnManual"
+                        class="flex-1 py-3 px-2 text-center font-semibold text-sm border-b-2 transition-all flex items-center justify-center gap-2 border-transparent text-slate-500 hover:text-slate-800">
+                        <i class="ph ph-book-open-text text-lg"></i>
+                        <span>คู่มือการใช้งาน</span>
+                    </button>
+                    <button onclick="switchHelpTab('glossary')" id="tabBtnGlossary"
+                        class="flex-1 py-3 px-2 text-center font-semibold text-sm border-b-2 transition-all flex items-center justify-center gap-2 border-transparent text-slate-500 hover:text-slate-800">
+                        <i class="ph ph-book-bookmark text-lg"></i>
+                        <span>คำศัพท์และตัวย่อ</span>
+                    </button>
+                </div>
 
-                    <!-- หมวดที่ 1 -->
-                    <div>
-                        <h3
-                            class="font-bold text-brand-700 text-base mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
-                            <i class="ph ph-globe-hemisphere-west"></i> หมวดที่ 1: ศัพท์หลักของระบบ (Core System)
-                        </h3>
-                        <ul class="space-y-3">
-                            <li><strong class="text-slate-800">API (American Petroleum Institute):</strong>
-                                สถาบันปิโตรเลียมแห่งอเมริกา เป็นหน่วยงานที่กำหนดมาตรฐานสากล (Standard)
-                                ที่ใช้กันทั่วโลกในอุตสาหกรรมน้ำมัน</li>
-                            <li><strong class="text-slate-800">MPMS (Manual of Petroleum Measurement
-                                    Standards):</strong> คู่มือมาตรฐานการวัดปริมาณปิโตรเลียม (ซึ่ง Chapter 17.9
-                                คือบทที่ว่าด้วยเรื่อง VEF โดยเฉพาะ)</li>
-                            <li><strong class="text-slate-800">VEF (Vessel Experience Factor):</strong>
-                                ค่าประสบการณ์ของเรือ หรือ ค่าคลาดเคลื่อนทางสถิติของถังระวางเรือ
-                                (ใช้เป็นตัวคูณ/ตัวหารเพื่อชดเชยความคลาดเคลื่อน)</li>
-                            <li><strong class="text-slate-800">VLR (Vessel Load Ratio):</strong>
-                                อัตราส่วนเที่ยวเรือขาโหลด (รับน้ำมันลงเรือ) ได้จาก เรือ ÷ ฝั่ง</li>
-                            <li><strong class="text-slate-800">VDR (Vessel Discharge Ratio):</strong>
-                                อัตราส่วนเที่ยวเรือขาจ่าย (สูบน้ำมันออกจากเรือ) ได้จาก เรือ ÷ ฝั่ง</li>
-                        </ul>
+                <!-- Scrollable Content -->
+                <div class="p-6 overflow-y-auto flex-grow text-sm text-slate-600 space-y-6 scroll-smooth custom-scrollbar" id="helpModalBody">
+
+                    <!-- Tab Pane 1: VEF Standard (API 17.9) -->
+                    <div id="tabPaneStandard" class="space-y-6">
+                        <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-xl p-6 text-white relative overflow-hidden shadow-sm">
+                            <i class="ph-fill ph-anchor text-9xl absolute -right-6 -bottom-10 text-white/5 rotate-12"></i>
+                            <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                                <i class="ph ph-info text-2xl text-brand-200"></i>
+                                ความเข้าใจเรื่อง Vessel Experience Factor (VEF)
+                            </h3>
+                            <p class="text-brand-100 font-light text-xs leading-relaxed max-w-3xl">
+                                ตามมาตรฐานสากล <strong>API MPMS Chapter 17.9</strong> ค่า VEF คือค่าความคลาดเคลื่อนทางสถิติของถังระวางเรือ (Vessel) เทียบกับถังบนบก (Shore)
+                                ที่รวบรวมจากข้อมูลการเดินเรือย้อนหลังที่มีลักษณะการขนส่งที่สมบูรณ์ เพื่อนำมาชดเชยตัวเลขปริมาณสินค้าและใช้ควบคุมการสูญเสียของน้ำมัน (Loss Control Tool)
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-brand-200 transition-all">
+                                <h4 class="font-bold text-brand-800 text-sm mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-2">
+                                    <i class="ph ph-question text-lg text-brand-600"></i> VEF คืออะไรและทำไมจึงสำคัญ?
+                                </h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">นิยามของ VEF:</strong> คือค่าเฉลี่ยของอัตราส่วน (Ratio) ระหว่างปริมาตรน้ำมันที่วัดได้บนเรือ กับปริมาณน้ำมันที่วัดได้บนฝั่งภายใต้สภาวะมาตรฐาน (15°C / 60°F) จากประวัติเที่ยวเรือก่อนหน้า</li>
+                                    <li><strong class="text-slate-800">ความแตกต่างโครงสร้างเรือและฝั่ง:</strong> ตารางความจุเรือ (Ullage Table) มาจากแผนผังการสร้าง ซึ่งอาจไม่สะท้อนถึงการเสียรูปของตัวเรือลอยน้ำจริง ต่างจากถังน้ำมันบนฝั่งที่ปรับเทียบ (Calibration) อย่างแม่นยำสูง</li>
+                                    <li><strong class="text-slate-800">Loss Control Tool:</strong> ใช้ตรวจสอบความสมเหตุสมผลของการสูบถ่าย หากอัตราส่วนในเที่ยวปัจจุบันแตกต่างจาก VEF ในอดีตอย่างมีนัยสำคัญ อาจแสดงว่ามีความผิดพลาดในการวัดหรือเกิดการสูญเสีย</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-brand-200 transition-all">
+                                <h4 class="font-bold text-brand-800 text-sm mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-2">
+                                    <i class="ph ph-funnel text-lg text-brand-600"></i> เกณฑ์คัดเลือกข้อมูล (The 20-Voyage Rule)
+                                </h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">ข้อมูล 20 เที่ยวล่าสุด:</strong> มาตรฐานกำหนดให้ใช้ประวัติเที่ยวเรือย้อนหลังสูงสุด 20 เที่ยวล่าสุดเรียงลำดับเวลา</li>
+                                    <li><strong class="text-slate-800">ตัวกรอง Gross Error (2%):</strong> คัดออกเที่ยวที่ Ratio เบี่ยงเบนเกิน 2% (น้อยกว่า <span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-mono">0.98000</span> หรือมากกว่า <span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-mono">1.02000</span>)</li>
+                                    <li><strong class="text-slate-800">เกณฑ์คัดออก ±0.30%:</strong> เที่ยวเรือที่ Ratio เบี่ยงเบนเกิน ±0.0030 จากค่าเฉลี่ยจะถูกคัดออก</li>
+                                    <li><strong class="text-slate-800">จำนวนขั้นต่ำ 5 เที่ยว:</strong> ต้องเหลือเที่ยวเรือที่ผ่านเกณฑ์อย่างน้อย 5 เที่ยว มิฉะนั้นจะถือว่าเป็น "INVALID VEF"</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-brand-200 transition-all md:col-span-2">
+                                <h4 class="font-bold text-brand-800 text-sm mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-2">
+                                    <i class="ph ph-calculator text-lg text-brand-600"></i> สูตรการคำนวณหลัก (Main Formulas)
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                    <div class="space-y-4">
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p class="font-bold text-xs text-brand-900 mb-2 flex items-center gap-1.5"><i class="ph ph-arrow-circle-down"></i> อัตราส่วนการโหลดเรือ (VLR)</p>
+                                            <div class="flex items-center justify-center font-mono font-bold text-xs text-slate-800 bg-white border border-slate-200 rounded py-3 px-1 shadow-inner">
+                                                <div class="text-right pr-1">VLR =</div>
+                                                <div class="flex flex-col items-center">
+                                                    <div class="pb-1 border-b border-slate-400 px-2 text-center text-[10px] md:text-xs">(TCV บนเรือหลังโหลด − OBQ)</div>
+                                                    <div class="pt-1 text-center text-[10px] md:text-xs">ปริมาณที่ส่งจากฝั่ง (B/L)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <p class="font-bold text-xs text-discharge-900 mb-2 flex items-center gap-1.5"><i class="ph ph-arrow-circle-up"></i> อัตราส่วนการถ่ายสินค้า (VDR)</p>
+                                            <div class="flex items-center justify-center font-mono font-bold text-xs text-slate-800 bg-white border border-slate-200 rounded py-3 px-1 shadow-inner">
+                                                <div class="text-right pr-1">VDR =</div>
+                                                <div class="flex flex-col items-center">
+                                                    <div class="pb-1 border-b border-slate-400 px-2 text-center text-[10px] md:text-xs">(TCV บนเรือก่อนถ่าย − ROB)</div>
+                                                    <div class="pt-1 text-center text-[10px] md:text-xs">ปริมาณที่รับบนฝั่ง (Outturn)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2.5 text-xs">
+                                        <p class="text-slate-700 font-semibold mb-1">ความหมายตัวแปร:</p>
+                                        <div class="flex items-start gap-2"><span class="bg-brand-100 text-brand-800 font-mono font-bold px-1.5 py-0.5 rounded text-[10px]">TCV</span><span><strong>Total Calculated Volume:</strong> ปริมาตรรวมสุทธิบนเรือ</span></div>
+                                        <div class="flex items-start gap-2"><span class="bg-brand-100 text-brand-800 font-mono font-bold px-1.5 py-0.5 rounded text-[10px]">OBQ</span><span><strong>On Board Quantity:</strong> ปริมาณที่เหลืออยู่ก่อนโหลด</span></div>
+                                        <div class="flex items-start gap-2"><span class="bg-brand-100 text-brand-800 font-mono font-bold px-1.5 py-0.5 rounded text-[10px]">ROB</span><span><strong>Remaining On Board:</strong> ปริมาณที่เหลือหลังถ่ายออก</span></div>
+                                        <div class="flex items-start gap-2"><span class="bg-brand-100 text-brand-800 font-mono font-bold px-1.5 py-0.5 rounded text-[10px]">Shore</span><span>Loading ใช้ <strong>B/L</strong>, Discharge ใช้ <strong>Outturn</strong></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-brand-200 transition-all md:col-span-2">
+                                <h4 class="font-bold text-brand-800 text-sm mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-2">
+                                    <i class="ph ph-shield-warning text-lg text-brand-600"></i> ข้อกำหนดที่เข้มงวด
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div class="bg-slate-50/50 p-3.5 rounded-lg border border-slate-100 text-xs">
+                                        <h5 class="font-bold text-slate-800 mb-2 flex items-center gap-1"><i class="ph-bold ph-number-circle-five text-base text-brand-500"></i> ทศนิยม 5 ตำแหน่ง</h5>
+                                        <p class="leading-relaxed text-slate-600">ค่า VEF ต้องแสดงทศนิยม 5 ตำแหน่ง (เช่น <code class="font-mono text-brand-700">1.00045</code>) เสมอ</p>
+                                    </div>
+                                    <div class="bg-slate-50/50 p-3.5 rounded-lg border border-slate-100 text-xs">
+                                        <h5 class="font-bold text-red-800 mb-2 flex items-center gap-1"><i class="ph-bold ph-prohibit-line text-base text-red-500"></i> ข้อมูลที่ห้ามใช้</h5>
+                                        <ul class="list-disc list-outside ml-4 space-y-1 text-slate-600 leading-relaxed">
+                                            <li>บรรจุสินค้าไม่เต็มลำ (น้อยกว่า 75%)</li>
+                                            <li>STS Transfer ที่ไม่มีการวัดฝั่ง</li>
+                                            <li>เที่ยวแรกหลังออกจากอู่แห้ง</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-slate-50/50 p-3.5 rounded-lg border border-slate-100 text-xs">
+                                        <h5 class="font-bold text-slate-800 mb-2 flex items-center gap-1"><i class="ph-bold ph-handshake text-base text-brand-500"></i> Custody Transfer</h5>
+                                        <p class="leading-relaxed text-slate-600">การนำ VEF ไปใช้ชำระเงินต้องได้รับการตกลงยินยอมเป็นลายลักษณ์อักษรจากทุกคู่สัญญา</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- หมวดที่ 2 -->
-                    <div>
-                        <h3
-                            class="font-bold text-brand-700 text-base mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
-                            <i class="ph ph-boat"></i> หมวดที่ 2: ฝั่งเรือ (Vessel Quantity)
-                        </h3>
-                        <p class="text-xs text-slate-500 mb-2 italic">คำศัพท์กลุ่มนี้ใช้เวลาวัดน้ำมัน "บนเรือ"</p>
-                        <ul class="space-y-3">
-                            <li><strong class="text-slate-800">Vessel (เวสเซล):</strong> หมายถึง เรือ, ถังระวางเรือ</li>
-                            <li><strong class="text-slate-800">TCV (Total Calculated Volume):</strong>
-                                ปริมาตรรวมสุทธิทั้งหมดที่วัดได้ในถัง (หลังจากแปลงค่าอุณหภูมิและความหนาแน่นเรียบร้อยแล้ว)
-                            </li>
-                            <li><strong class="text-slate-800">OBQ (On Board Quantity):</strong> ปริมาณของเหลว/น้ำมัน
-                                หรือตะกอนที่ "ติดค้างอยู่ในถังเรือก่อนที่จะเริ่มโหลดน้ำมันใหม่ลงไป" (ต้องเอา TCV
-                                ไปลบตัวนี้ออก ถึงจะได้น้ำมันที่รับเข้ามาจริงๆ)</li>
-                            <li><strong class="text-slate-800">ROB (Remaining On Board):</strong> ปริมาณน้ำมัน
-                                หรือตะกอนที่ "เหลือติดก้นถังหลังจากที่เรือสูบน้ำมันจ่ายออกไปหมดแล้ว" (ต้องเอา TCV
-                                ไปลบตัวนี้ออก ถึงจะได้น้ำมันที่จ่ายออกไปจริงๆ)</li>
-                        </ul>
+                    <!-- Tab Pane 2: User Guide -->
+                    <div id="tabPaneManual" class="space-y-6 hidden">
+                        <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-xl p-6 text-white relative overflow-hidden shadow-sm">
+                            <i class="ph-fill ph-book-open text-9xl absolute -right-6 -bottom-10 text-white/5 rotate-12"></i>
+                            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><i class="ph ph-book-open-text text-2xl text-brand-200"></i> คู่มือการใช้งานระบบ VEF Calculator</h3>
+                            <p class="text-brand-100 font-light text-xs">คำแนะนำทีละขั้นตอนในการกรอง คัดกรอง จำลองปริมาณชดเชย และสั่งพิมพ์รายงาน</p>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-slate-800 text-sm mb-3.5 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 flex items-center justify-center font-mono font-bold text-xs">1</span> การเลือกเรือและการคัดกรองข้อมูล</h4>
+                                <ul class="list-disc list-outside ml-6 space-y-2 text-xs text-slate-600">
+                                    <li>เลือกรายชื่อเรือที่ช่อง <strong>"เลือกรายชื่อเรือ"</strong> ด้านซ้ายบน ระบบจะโหลดเที่ยวเรือย้อนหลังสูงสุด 20 เที่ยวมาแสดงทันที</li>
+                                    <li>ใช้ตัวกรอง <strong>Load Date</strong>, <strong>From</strong>, <strong>To</strong>, และ <strong>Product</strong> เพื่อกรองเที่ยวเรือเฉพาะเจาะจง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-slate-800 text-sm mb-3.5 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 flex items-center justify-center font-mono font-bold text-xs">2</span> การแก้ไขและคำนวณข้อมูล</h4>
+                                <ul class="list-disc list-outside ml-6 space-y-2 text-xs text-slate-600">
+                                    <li>แก้ไขค่า <strong>Shore</strong> และ <strong>Vessel</strong> ได้โดยตรง ระบบจัดรูปแบบตัวเลขอัตโนมัติ</li>
+                                    <li>ระบบคำนวณ <strong>Ratio</strong>, <strong>Loss/Gain</strong> และประเมิน <strong>Status</strong> ทันที
+                                        <div class="flex gap-2 mt-2"><span class="bg-green-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Qualify</span><span class="text-slate-500 text-[10px]">- ผ่านเกณฑ์ ±0.30%</span></div>
+                                        <div class="flex gap-2 mt-1"><span class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Outlier</span><span class="text-slate-500 text-[10px]">- หลุดกรอบ จะถูกคัดออก</span></div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-slate-800 text-sm mb-3.5 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 flex items-center justify-center font-mono font-bold text-xs">3</span> VEF Dashboard</h4>
+                                <ul class="list-disc list-outside ml-6 space-y-2 text-xs text-slate-600">
+                                    <li><strong>Total Voyages:</strong> เที่ยวเรือทั้งหมดที่มีตัวเลขครบ</li>
+                                    <li><strong>Qualifying:</strong> จำนวนเที่ยวที่ผ่านเกณฑ์ (ต้องมีอย่างน้อย 5 เที่ยว)</li>
+                                    <li><strong>Final VEF:</strong> ค่า VEF สุทธิถ่วงน้ำหนักด้วยปริมาตร ทศนิยม 5 ตำแหน่ง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-slate-800 text-sm mb-3.5 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 flex items-center justify-center font-mono font-bold text-xs">4</span> การจำลองปริมาณ (Simulation)</h4>
+                                <ul class="list-disc list-outside ml-6 space-y-2 text-xs text-slate-600">
+                                    <li>สลับโหมด: <strong>Simul.Shore.</strong> กรอก Vessel หาค่า Shore <code class="font-mono text-slate-500 bg-slate-100 px-1 rounded">(Vessel / VEF)</code> หรือ <strong>Simul.Vessel.</strong> กรอก Shore หาค่า Vessel <code class="font-mono text-slate-500 bg-slate-100 px-1 rounded">(Shore × VEF)</code></li>
+                                    <li>กดปุ่ม <strong>"ดึง 1 แถว"</strong> หรือ <strong>"ดึง 2 แถว"</strong> เพื่อคัดลอกข้อมูลจากตารางหลัก</li>
+                                    <li>แก้ไข <strong>Date</strong> (ปฏิทิน), <strong>From/To</strong> (Dropdown), <strong>Product</strong> (Dropdown) และปริมาณตัวเลขได้โดยตรง</li>
+                                    <li>ติ๊กถูก <strong>"แสดงใน PDF"</strong> เพื่อรวมตารางจำลองในรายงานพิมพ์</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-slate-800 text-sm mb-3.5 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-brand-100 text-brand-800 flex items-center justify-center font-mono font-bold text-xs">5</span> พิมพ์รายงาน (Print PDF)</h4>
+                                <ul class="list-disc list-outside ml-6 space-y-2 text-xs text-slate-600">
+                                    <li>กดปุ่มสีเขียว <strong>"Print PDF"</strong> มุมขวาบน</li>
+                                    <li><strong class="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 inline-block mt-1 font-semibold">สำคัญ:</strong> ต้องเลือกเช็คถูก <strong>"กราฟิกพื้นหลัง" (Background graphics)</strong> ในตั้งค่าพิมพ์</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- หมวดที่ 3 -->
-                    <div>
-                        <h3
-                            class="font-bold text-brand-700 text-base mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
-                            <i class="ph ph-buildings"></i> หมวดที่ 3: ฝั่งบก/คลัง (Shore Quantity)
-                        </h3>
-                        <p class="text-xs text-slate-500 mb-2 italic">คำศัพท์กลุ่มนี้ใช้เวลาดูเอกสารหรือมาตรวัด "บนบก"
-                        </p>
-                        <ul class="space-y-3">
-                            <li><strong class="text-slate-800">Shore (ชอร์):</strong> หมายถึง ฝั่ง, คลังน้ำมัน, ถังบนบก
-                            </li>
-                            <li><strong class="text-slate-800">B/L (Bill of Lading):</strong> เอกสารใบตราส่งสินค้า หรือ
-                                ใบกำกับสินค้า ในกรณีของการ Load จะใช้ตัวเลขจาก B/L เป็นตัวแทนของ "ปริมาณน้ำมันฝั่ง"</li>
-                            <li><strong class="text-slate-800">Outturn (เอาท์เทิร์น):</strong>
-                                ปริมาณน้ำมันที่คลังปลายทางรับเข้าถังบนบกได้จริงๆ
-                                (ใช้เป็นตัวแทนของปริมาณน้ำมันฝั่งในกรณีของการ Discharge)</li>
-                        </ul>
-                    </div>
-
-                    <!-- หมวดที่ 4 -->
-                    <div>
-                        <h3
-                            class="font-bold text-brand-700 text-base mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
-                            <i class="ph ph-chart-bar"></i> หมวดที่ 4: สถิติและการคัดกรองในรายงาน (Stats & Status)
-                        </h3>
-                        <p class="text-xs text-slate-500 mb-2 italic">คำศัพท์กลุ่มนี้จะเจอในช่องสรุปผล (Summary)
-                            ของรายงาน VEF</p>
-                        <ul class="space-y-3">
-                            <li><strong class="text-slate-800">Voyage (โวยาจ):</strong> เที่ยวเรือ,
-                                การเดินทางแต่ละรอบของเรือ</li>
-                            <li><strong class="text-slate-800">Ratio (เรโช):</strong> อัตราส่วน (เกิดจากการเอาตัวเลข 2
-                                ตัวมาหารกัน)</li>
-                            <li><strong class="text-slate-800">Mean (มีน) / Mean Ratio:</strong>
-                                ค่าเฉลี่ยของอัตราส่วนทั้งหมดที่นำมาคำนวณ</li>
-                            <li><strong class="text-slate-800">Limit (ลิมิต):</strong> ขีดจำกัด หรือ กรอบที่ยอมรับได้
-                                (ตามมาตรฐาน API 17.9 กำหนดไว้ที่ Mean ± 0.0030)</li>
-                            <li><strong class="text-slate-800">Qualify (ควอลิฟาย) / Qualifying:</strong> ผ่านเกณฑ์,
-                                ใช้งานได้ (คือเที่ยวเรือที่ตัวเลข Ratio อยู่ในกรอบ Limit)</li>
-                            <li><strong class="text-slate-800">Outlier (เอาท์ไลเออร์):</strong> ข้อมูลผิดปกติ,
-                                ค่าที่กระโดดหลุดโลก (คือเที่ยวเรือที่ตัวเลข Ratio ทะลุเกินกรอบ Limit)</li>
-                            <li><strong class="text-slate-800">Volume-Weighted (วอลลุ่ม-เวทเทท):</strong>
-                                การถ่วงน้ำหนักด้วยปริมาตร (คือการเอาผลรวม Volume ทั้งหมดมาหารกัน แทนที่จะเอา Ratio
-                                มาเฉลี่ยกันดื้อๆ)</li>
-                            <li><strong class="text-slate-800">Invalid (อินวาลิด):</strong> ใช้การไม่ได้, โมฆะ
-                                (จะขึ้นคำนี้เมื่อมีเที่ยวเรือที่ Qualify ไม่ถึง 5 เที่ยว)</li>
-                        </ul>
-                    </div>
-
-                    <!-- หมวดที่ 5 -->
-                    <div>
-                        <h3
-                            class="font-bold text-brand-700 text-base mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
-                            <i class="ph ph-calculator"></i> หมวดที่ 5: การนำไปใช้ (Simulation / Application)
-                        </h3>
-                        <ul class="space-y-3">
-                            <li><strong class="text-slate-800">CAL.(Vessel / VEF) (แคลคูเลท-ชอร์):</strong>
-                                ปริมาณฝั่งจำลอง (หาได้จาก: เอาตัวเลขเรือไป หาร VEF)</li>
-                            <li><strong class="text-slate-800">CAL.(Shore × VEF) (แคลคูเลท-เวสเซล):</strong>
-                                ปริมาณเรือจำลอง (หาได้จาก: เอาตัวเลขฝั่งไป คูณ VEF)</li>
-                            <li><strong class="text-slate-800">Loss / Gain (ลอส / เกน):</strong> น้ำมันขาดหาย /
-                                น้ำมันเกิน (จากการสูบถ่าย)</li>
-                        </ul>
+                    <!-- Tab Pane 3: Glossary -->
+                    <div id="tabPaneGlossary" class="space-y-6 hidden">
+                        <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-xl p-6 text-white relative overflow-hidden shadow-sm">
+                            <i class="ph-fill ph-book-bookmark text-9xl absolute -right-6 -bottom-10 text-white/5 rotate-12"></i>
+                            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><i class="ph ph-book-bookmark text-2xl text-brand-200"></i> คำศัพท์และตัวย่อในระบบ VEF</h3>
+                            <p class="text-brand-100 font-light text-xs">รวบรวมนิยามศัพท์สถิติ คำย่อสากล และมาตรวิทยาที่ใช้ในระบบ VEF Calculator</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-brand-800 text-xs mb-3 flex items-center gap-1.5 border-b border-slate-100 pb-2"><i class="ph ph-globe text-base text-brand-600"></i> หมวดที่ 1: ศัพท์ระบบหลัก</h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">API:</strong> สถาบันปิโตรเลียมแห่งอเมริกา</li>
+                                    <li><strong class="text-slate-800">MPMS:</strong> คู่มือมาตรฐานการวัดปริมาณปิโตรเลียม Chapter 17.9</li>
+                                    <li><strong class="text-slate-800">VLR (Vessel Load Ratio):</strong> อัตราส่วนขาโหลด = เรือ ÷ ฝั่ง</li>
+                                    <li><strong class="text-slate-800">VDR (Vessel Discharge Ratio):</strong> อัตราส่วนขาจ่าย = เรือ ÷ ฝั่ง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-brand-800 text-xs mb-3 flex items-center gap-1.5 border-b border-slate-100 pb-2"><i class="ph ph-boat text-base text-brand-600"></i> หมวดที่ 2: ฝั่งเรือ (Vessel)</h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">Vessel:</strong> ตัวเรือ / ถังระวางน้ำมัน</li>
+                                    <li><strong class="text-slate-800">TCV:</strong> ปริมาตรรวมสุทธิ (ปรับแก้แล้ว)</li>
+                                    <li><strong class="text-slate-800">OBQ:</strong> ปริมาณที่เหลืออยู่ก่อนโหลด</li>
+                                    <li><strong class="text-slate-800">ROB:</strong> ปริมาณที่เหลือหลังถ่ายจ่ายเสร็จ</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-brand-800 text-xs mb-3 flex items-center gap-1.5 border-b border-slate-100 pb-2"><i class="ph ph-buildings text-base text-brand-600"></i> หมวดที่ 3: ฝั่งคลังบก (Shore)</h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">Shore:</strong> ฝั่ง / คลังน้ำมัน / ถังเก็บบนบก</li>
+                                    <li><strong class="text-slate-800">B/L (Bill of Lading):</strong> ใบตราส่งสินค้า ใช้เป็นปริมาณฝั่งในส่วน Loading</li>
+                                    <li><strong class="text-slate-800">Outturn:</strong> ปริมาณที่วัดจริงบนฝั่งปลายทาง ใช้ในส่วน Discharge</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                                <h4 class="font-bold text-brand-800 text-xs mb-3 flex items-center gap-1.5 border-b border-slate-100 pb-2"><i class="ph ph-chart-bar text-base text-brand-600"></i> หมวดที่ 4: สถิติตาราง</h4>
+                                <ul class="space-y-3 text-xs leading-relaxed">
+                                    <li><strong class="text-slate-800">Voyage:</strong> เที่ยวเรือขนน้ำมัน</li>
+                                    <li><strong class="text-slate-800">Mean Ratio:</strong> ค่าเฉลี่ยอัตราส่วน</li>
+                                    <li><strong class="text-slate-800">Limit Range:</strong> ขอบเขตที่ยอมรับ (Mean ± 0.0030)</li>
+                                    <li><strong class="text-slate-800">Qualify:</strong> ผ่านเกณฑ์ (อยู่ใน Limit Range)</li>
+                                    <li><strong class="text-slate-800">Outlier:</strong> หลุดเกณฑ์ (เบี่ยงเบนเกิน Limit Range)</li>
+                                    <li><strong class="text-slate-800">Volume-Weighted VEF:</strong> ถ่วงน้ำหนักตามปริมาตรจริง</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
 
                 <!-- Footer -->
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end">
-                    <button onclick="closeDictionary()"
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                    <button onclick="closeHelpModal()"
                         class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors shadow-sm text-sm">
                         ปิดหน้าต่าง
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Manual Modal -->
-        <div id="manualModal"
-            class="fixed inset-0 bg-slate-900/60 z-[100] hidden items-center justify-center transition-opacity duration-300 opacity-0 no-print backdrop-blur-sm">
-            <div class="bg-slate-50 rounded-2xl shadow-2xl max-w-5xl w-full mx-4 max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 overflow-hidden relative"
-                id="manualModalContent">
-
-                <!-- Close Button (Absolute) -->
-                <button onclick="closeManual()"
-                    class="absolute top-4 right-4 z-50 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 backdrop-blur transition shadow-lg">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-
-                <!-- Scrollable Content -->
-                <div class="overflow-y-auto flex-grow w-full relative custom-scrollbar scroll-smooth" id="manualTop">
-
-                    <!-- Hero Header -->
-                    <header
-                        class="bg-gradient-to-br from-brand-900 to-brand-800 text-white pt-16 pb-24 relative overflow-hidden">
-                        <!-- Background Pattern -->
-                        <i class="ph-fill ph-anchor text-9xl absolute -right-10 -bottom-10 text-white/10 rotate-12"></i>
-                        <i class="ph-fill ph-waves text-9xl absolute -left-10 top-10 text-white/10 -rotate-12"></i>
-
-                        <div class="max-w-5xl mx-auto px-6 relative z-10 text-center">
-                            <div
-                                class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur border border-white/20 mb-6 shadow-xl">
-                                <i class="ph-fill ph-book-open-text text-3xl text-brand-100"></i>
-                            </div>
-                            <h1 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">คู่มือการใช้งาน VEF
-                                Calculator</h1>
-                            <p class="text-lg md:text-xl text-brand-100 font-light mb-2">Cloud Edition • Vessel
-                                Experience Factor</p>
-                            <p
-                                class="text-sm text-brand-200/80 bg-black/20 inline-block px-4 py-1.5 rounded-full border border-white/10">
-                                มาตรฐานอ้างอิง: API MPMS Chapter 17.9</p>
-                        </div>
-                    </header>
-
-                    <!-- Main Content Container -->
-                    <main class="max-w-4xl mx-auto px-4 sm:px-6 -mt-12 relative z-20 space-y-6 pb-12">
-
-                        <!-- Intro -->
-                        <div class="glass-card rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8">
-                            <p class="text-slate-600 leading-relaxed text-center text-lg">
-                                ระบบ <strong>VEF Calculator</strong> ถูกออกแบบมาเพื่อช่วยคำนวณค่าประสบการณ์ของเรือ
-                                ลดข้อผิดพลาดจากการคำนวณด้วยมือ และสามารถเชื่อมต่อฐานข้อมูลบน Cloud ได้
-                                เพื่อให้ออกรายงานได้อย่างรวดเร็วและแม่นยำ
-                            </p>
-                        </div>
-
-                        <!-- 1. Login -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-lock-key text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">1. การเข้าสู่ระบบ (Login)</h2>
-                            </div>
-                            <div class="p-6">
-                                <ol class="list-decimal list-inside space-y-3 text-slate-600 ml-2">
-                                    <li>เมื่อเปิดหน้าเว็บไซต์ ระบบจะแสดงหน้าต่างให้ใส่รหัสผ่าน เพื่อความปลอดภัยของข้อมูล
-                                    </li>
-                                    <li>พิมพ์รหัสผ่าน: <span
-                                            class="bg-slate-800 text-white font-mono px-3 py-1 rounded-md text-sm mx-1 tracking-widest shadow-inner">2903</span>
-                                    </li>
-                                    <li>กดปุ่ม <strong>"เข้าสู่ระบบ"</strong> หรือกดปุ่ม <kbd
-                                            class="bg-slate-100 border border-slate-300 rounded px-2 py-0.5 text-sm mx-1 shadow-sm">Enter</kbd>
-                                        ที่คีย์บอร์ด</li>
-                                </ol>
-                            </div>
-                        </section>
-
-                        <!-- 2. Modes -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-sliders text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">2. การเลือกโหมดการทำงาน (Load / Discharge)
-                                </h2>
-                            </div>
-                            <div class="p-6">
-                                <p class="text-slate-600 mb-4">ที่แถบเมนูด้านบนขวา
-                                    จะมีปุ่มสำหรับเลือกโหมดการทำงานของเรือ:</p>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div
-                                        class="border border-brand-200 bg-brand-50 p-4 rounded-xl relative overflow-hidden">
-                                        <i
-                                            class="ph-duotone ph-arrow-circle-down absolute -right-4 -bottom-4 text-6xl text-brand-500/10"></i>
-                                        <h3 class="font-bold text-brand-800 text-lg mb-2 flex items-center gap-2"><i
-                                                class="ph-fill ph-arrow-circle-down text-brand-600"></i> โหลดลง (Load)
-                                        </h3>
-                                        <p class="text-sm text-slate-600 mb-2">ใช้เมื่อ
-                                            <strong>จ่ายน้ำมันจากฝั่งลงเรือ</strong>
-                                        </p>
-                                        <p
-                                            class="text-xs bg-white text-brand-900 px-3 py-2 rounded-lg border border-brand-100 shadow-sm">
-                                            <strong>สูตร:</strong> Vessel TCV-OBQ / Shore B/L
-                                        </p>
-                                    </div>
-                                    <div
-                                        class="border border-discharge-200 bg-discharge-50 p-4 rounded-xl relative overflow-hidden">
-                                        <i
-                                            class="ph-duotone ph-arrow-circle-up absolute -right-4 -bottom-4 text-6xl text-discharge-600/10"></i>
-                                        <h3 class="font-bold text-discharge-900 text-lg mb-2 flex items-center gap-2"><i
-                                                class="ph-fill ph-arrow-circle-up text-discharge-600"></i> จ่ายออก
-                                            (Discharge)</h3>
-                                        <p class="text-sm text-slate-600 mb-2">ใช้เมื่อ
-                                            <strong>สูบน้ำมันจากเรือขึ้นฝั่ง</strong>
-                                        </p>
-                                        <p
-                                            class="text-xs bg-white text-discharge-900 px-3 py-2 rounded-lg border border-discharge-100 shadow-sm">
-                                            <strong>สูตร:</strong> Vessel TCV-ROB / Shore Outturn
-                                        </p>
-                                    </div>
-                                </div>
-                                <div
-                                    class="mt-4 flex gap-3 p-3 bg-amber-50 text-amber-800 rounded-lg text-sm border border-amber-200">
-                                    <i class="ph-fill ph-warning-circle text-xl shrink-0 mt-0.5"></i>
-                                    <p><strong>ข้อควรระวัง:</strong> การเปลี่ยนโหมดจะทำการล้างข้อมูลบนหน้าจอชั่วคราว
-                                        เพื่อป้องกันความสับสนของการคำนวณตัวเลขข้ามโหมด</p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 3. Database -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-database text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">3. การจัดการฐานข้อมูล (Database
-                                    Integration)</h2>
-                            </div>
-                            <div class="p-6 space-y-6">
-                                <div>
-                                    <h3 class="font-bold text-slate-800 mb-2 text-lg">3.1 การอ่านข้อมูลจาก Cloud
-                                        (อัตโนมัติ)</h3>
-                                    <p class="text-slate-600 leading-relaxed">
-                                        ทันทีที่เข้าสู่ระบบ ระบบจะทำการดึงข้อมูลจาก Firebase มาแสดงผลโดยอัตโนมัติ
-                                        หากมีข้อมูล จะแสดงข้อความ
-                                        <span
-                                            class="inline-flex items-center gap-1 text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-sm mx-1">
-                                            <i class="ph-fill ph-check-circle"></i> โหลดข้อมูลจาก Cloud สำเร็จ
-                                        </span>
-                                        พร้อมบอกจำนวนรายการและจำนวนเรือ
-                                    </p>
-                                </div>
-                                <hr class="border-slate-100">
-                                <div>
-                                    <h3 class="font-bold text-slate-800 mb-2 text-lg">3.2 การอัปเดตข้อมูลจาก Excel
-                                        (Local to Cloud)</h3>
-                                    <p class="text-slate-600 mb-3">หากต้องการอัปเดตฐานข้อมูลใหม่ สามารถดึงไฟล์ Excel
-                                        จากเครื่องขึ้น Cloud ได้ (แนะนำให้ใช้เบราว์เซอร์ Google Chrome หรือ Edge)</p>
-                                    <ul class="list-disc list-outside ml-6 space-y-2 text-slate-600">
-                                        <li>เตรียมไฟล์ Excel (<code class="bg-slate-100 px-1 rounded">.xlsx</code> หรือ
-                                            <code class="bg-slate-100 px-1 rounded">.xlsm</code>) ต้องมีชีทชื่อ
-                                            <strong>"DATA BASE"</strong> และหัวตารางต้องมีคอลัมน์ชื่อ
-                                            <strong>"เรือ"</strong>
-                                        </li>
-                                        <li>กดปุ่ม <span
-                                                class="bg-blue-600 text-white px-2 py-1 rounded text-xs shadow-sm mx-1"><i
-                                                    class="ph-bold ph-folder-open"></i> อัปเดตข้อมูลจากโฟลเดอร์
-                                                Excelในเครื่อง</span></li>
-                                        <li>เบราว์เซอร์จะให้ <strong>เลือกโฟลเดอร์</strong> ที่เก็บไฟล์ (ให้กด View
-                                            files และ อนุญาต/Allow)</li>
-                                        <li>ระบบจะกวาดไฟล์ Excel ทั้งหมดในโฟลเดอร์นั้น อ่านข้อมูล และอัปโหลดขึ้น Cloud โดยจะรวมข้อมูลเข้ากับข้อมูลเดิมที่มีอยู่ (ข้ามรายการที่ซ้ำกัน และเพิ่มเฉพาะรายการใหม่) ทำให้สามารถเลือกอัปเดตข้อมูลเพิ่มเข้ามาจากหลายๆ โฟลเดอร์ได้</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 4. Filtering -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-funnel text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">4. การค้นหาและกรองข้อมูล (Filtering)</h2>
-                            </div>
-                            <div class="p-6 flex flex-col md:flex-row gap-6 items-center">
-                                <div class="flex-1 space-y-3 text-slate-600">
-                                    <p>เมื่อระบบมีฐานข้อมูลแล้ว สามารถเรียกดูข้อมูลเรือได้ง่ายๆ:</p>
-                                    <ul class="list-disc list-outside ml-6 space-y-2">
-                                        <li>พิมพ์ชื่อเรือลงในช่อง <strong>ชื่อเรือ (Vessel)</strong> หรือคลิกเลือกจาก
-                                            Dropdown</li>
-                                        <li>ระบบจะดึงประวัติ <strong>20 เที่ยวล่าสุด</strong> มาลงตารางทันที</li>
-                                        <li><strong>การกรองแบบละเอียด:</strong>
-                                            ใช้ช่องตัวกรองด้านล่างเพื่อเลือกเฉพาะข้อมูลที่ต้องการ (เลือกได้มากกว่า 1
-                                            รายการ)</li>
-                                    </ul>
-                                </div>
-                                <div class="w-full md:w-64 bg-slate-50 p-4 rounded-xl border border-slate-200 shrink-0">
-                                    <div class="space-y-2 text-xs font-bold text-slate-500 uppercase tracking-wide">
-                                        <div
-                                            class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
-                                            <span><i class="ph-bold ph-calendar-blank mr-1"></i> Load Date</span> <i
-                                                class="ph-bold ph-caret-down"></i>
-                                        </div>
-                                        <div
-                                            class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
-                                            <span><i class="ph-bold ph-map-pin mr-1"></i> From</span> <i
-                                                class="ph-bold ph-caret-down"></i>
-                                        </div>
-                                        <div
-                                            class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
-                                            <span><i class="ph-bold ph-flag-checkered mr-1"></i> To</span> <i
-                                                class="ph-bold ph-caret-down"></i>
-                                        </div>
-                                        <div
-                                            class="bg-white p-2 rounded border border-slate-200 shadow-sm flex justify-between items-center">
-                                            <span><i class="ph-bold ph-drop mr-1"></i> Product</span> <i
-                                                class="ph-bold ph-caret-down"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 5. Table & 6. Summary combined for better flow -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Table Info -->
-                            <section
-                                class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                                <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                    <i class="ph-fill ph-table text-xl text-brand-600 shrink-0"></i>
-                                    <h2 class="text-lg font-bold text-slate-800">5. ตารางข้อมูล (History)</h2>
-                                </div>
-                                <div class="p-6 text-slate-600 space-y-4">
-                                    <p>แสดงข้อมูล 20 เที่ยวเรือล่าสุด:</p>
-                                    <ul class="list-disc list-outside ml-5 space-y-2 text-sm">
-                                        <li><strong>การแก้ไข:</strong> คลิกที่ช่อง Shore หรือ Vessel
-                                            เพื่อพิมพ์แก้ไขตัวเลขได้เอง</li>
-                                        <li><strong>อัตโนมัติ:</strong> ระบบจะคำนวณ <strong>Ratio</strong> และประเมิน
-                                            <strong>Status</strong> ทันที
-                                        </li>
-                                    </ul>
-                                    <div class="flex gap-2 text-xs pt-2">
-                                        <span class="bg-green-600 text-white px-2 py-1 rounded shadow-sm">Qualify
-                                            (ผ่านเกณฑ์)</span>
-                                        <span class="bg-red-600 text-white px-2 py-1 rounded shadow-sm">Outlier
-                                            (ผิดปกติ)</span>
-                                    </div>
-                                </div>
-                            </section>
-
-                            <!-- Summary Info -->
-                            <section
-                                class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                                <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                    <i class="ph-fill ph-chart-pie-slice text-xl text-brand-600 shrink-0"></i>
-                                    <h2 class="text-lg font-bold text-slate-800">6. ผลสรุป (Summary)</h2>
-                                </div>
-                                <div class="p-6 text-slate-600 space-y-4 text-sm">
-                                    <ul class="space-y-2">
-                                        <li><i class="ph-bold ph-check text-brand-500 mr-1"></i> <strong>Total
-                                                Voyages:</strong> เที่ยวเรือทั้งหมด</li>
-                                        <li><i class="ph-bold ph-check text-brand-500 mr-1"></i>
-                                            <strong>Qualifying:</strong> เที่ยวที่ผ่านเกณฑ์ (±0.0030)
-                                        </li>
-                                        <li><i class="ph-bold ph-check text-brand-500 mr-1"></i> <strong>Final
-                                                VEF:</strong> ค่า VEF สุทธิแบบ Volume-Weighted</li>
-                                    </ul>
-                                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                        <p class="font-bold mb-1">การอ่านสถานะ (Badge):</p>
-                                        <p><span
-                                                class="text-emerald-700 font-bold text-[10px] bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300">VEF
-                                                ผ่านเกณฑ์</span> เมื่อผ่าน ≥ 5 เที่ยว</p>
-                                        <p class="mt-1"><span
-                                                class="text-red-700 font-bold text-[10px] bg-red-100 px-1.5 py-0.5 rounded border border-red-300">ข้อมูลไม่พอ
-                                                (Min 5)</span> เมื่อผ่าน < 5 เที่ยว</p>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-
-                        <!-- 7. Simulation -->
-                        <section
-                            class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-lg border border-slate-700 overflow-hidden text-white relative">
-                            <i
-                                class="ph-fill ph-calculator text-9xl absolute -right-6 -bottom-6 text-white/5 rotate-12"></i>
-                            <div class="px-6 py-4 border-b border-white/10 flex items-center gap-3 relative z-10">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-arrows-left-right text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold">7. เครื่องมือจำลองปริมาณ (Simulation Tool)</h2>
-                            </div>
-                            <div class="p-6 relative z-10">
-                                <p class="text-slate-300 mb-4">ใช้สำหรับหาค่าชดเชยเมื่อทราบค่า VEF ที่ผ่านเกณฑ์แล้ว
-                                    โดยมี 2 โหมดการทำงาน:</p>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div class="bg-white/10 p-4 rounded-xl border border-white/10">
-                                        <h3 class="font-bold text-brand-300 mb-2 flex items-center gap-2"><i
-                                                class="ph-bold ph-factory"></i> โหมดหาปริมาณฝั่ง (Shore)</h3>
-                                        <p class="text-sm text-slate-300 mb-2">กรอกปริมาณเรือ เพื่อหาว่า "ปริมาณฝั่ง"
-                                            ควรเป็นเท่าไหร่</p>
-                                        <p
-                                            class="text-xs bg-black/30 inline-block px-2 py-1 rounded text-slate-400 font-mono">
-                                            สูตร: Vessel ÷ VEF</p>
-                                    </div>
-                                    <div class="bg-white/10 p-4 rounded-xl border border-white/10">
-                                        <h3 class="font-bold text-amber-300 mb-2 flex items-center gap-2"><i
-                                                class="ph-bold ph-boat"></i> โหมดหาปริมาณเรือ (Vessel)</h3>
-                                        <p class="text-sm text-slate-300 mb-2">กรอกปริมาณฝั่ง เพื่อหาว่า "ปริมาณเรือ"
-                                            ควรเป็นเท่าไหร่</p>
-                                        <p
-                                            class="text-xs bg-black/30 inline-block px-2 py-1 rounded text-slate-400 font-mono">
-                                            สูตร: Shore × VEF</p>
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="bg-brand-900/50 p-4 rounded-lg border border-brand-500/30 text-sm flex items-start gap-3">
-                                    <i class="ph-fill ph-file-pdf text-2xl text-brand-300 shrink-0"></i>
-                                    <div>
-                                        <p class="font-bold text-brand-100">การแสดงผลในรายงาน PDF</p>
-                                        <p class="text-brand-200/80">หากต้องการให้ผลการจำลองนี้ปรากฏในเอกสารที่จะปรินต์
-                                            ให้ติ๊ก <i class="ph-bold ph-check-square text-brand-400 inline"></i>
-                                            <strong>"แสดงตารางจำลองปริมาณใน PDF"</strong> ที่ด้านล่างของเครื่องมือ
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 8. Print PDF -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-printer text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">8. การสั่งพิมพ์รายงาน (Print PDF)</h2>
-                            </div>
-                            <div class="p-6 flex flex-col md:flex-row gap-6">
-                                <div class="flex-1 space-y-4 text-slate-600">
-                                    <p>เมื่อตรวจสอบข้อมูลถูกต้องและต้องการออกรายงานทางการ:</p>
-                                    <ol class="list-decimal list-inside space-y-2">
-                                        <li>กดปุ่มสีเขียว <span
-                                                class="bg-emerald-500 text-white px-2 py-1 rounded text-xs mx-1 shadow-sm"><i
-                                                    class="ph-bold ph-printer"></i> Print PDF</span> มุมขวาบน</li>
-                                        <li>ระบบจะจัดหน้าจอเข้าสู่โหมด <strong>A4 แนวตั้ง (Portrait)</strong>
-                                            ให้อัตโนมัติ โดยซ่อนเครื่องมือที่ไม่จำเป็นออก
-                                            และเพิ่มช่องสำหรับเซ็นชื่อท้ายกระดาษ</li>
-                                    </ol>
-                                </div>
-                                <div
-                                    class="w-full md:w-72 bg-amber-50 rounded-xl border border-amber-200 p-4 shrink-0 shadow-sm">
-                                    <h3 class="font-bold text-amber-800 flex items-center gap-2 mb-2"><i
-                                            class="ph-fill ph-warning-circle text-lg"></i> สำคัญมากก่อนสั่งพิมพ์!</h3>
-                                    <p class="text-sm text-amber-700 leading-relaxed">
-                                        ในหน้าต่างการตั้งค่าเครื่องพิมพ์ (Print Settings) ต้องเปิดใช้งาน
-                                        <strong>"กราฟิกพื้นหลัง" (Background Graphics)</strong> เสมอ
-                                        เพื่อให้สีของตารางและป้ายสถานะติดลงไปบนกระดาษด้วย
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 9. Toolbar -->
-                        <section
-                            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-brand-300 transition-colors">
-                            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shrink-0">
-                                    <i class="ph-fill ph-wrench text-xl"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-slate-800">9. เครื่องมืออื่นๆ (Toolbar)</h2>
-                            </div>
-                            <div class="p-6">
-                                <p class="text-slate-600 mb-4">ที่มุมขวาบนของแอพพลิเคชั่น
-                                    จะมีปุ่มเครื่องมือช่วยเหลือเพิ่มเติม:</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div
-                                        class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                        <div
-                                            class="bg-slate-800 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-trash"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-sm text-slate-800">ล้างข้อมูล</p>
-                                            <p class="text-xs text-slate-500">ล้างตารางและตัวกรอง</p>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                        <div
-                                            class="bg-brand-600 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-info"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-sm text-slate-800">คู่มือ</p>
-                                            <p class="text-xs text-slate-500">เปิดหน้าต่างคู่มือฉบับย่อ</p>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                        <div
-                                            class="bg-brand-600 text-white w-8 h-8 rounded flex items-center justify-center shrink-0 shadow-sm">
-                                            <i class="ph-bold ph-book-open"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-sm text-slate-800">คำศัพท์</p>
-                                            <p class="text-xs text-slate-500">พจนานุกรมคำศัพท์ VEF</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                    </main>
-
-                    <!-- Footer -->
-                    <footer
-                        class="mt-12 text-center text-slate-400 text-sm py-8 border-t border-slate-200 max-w-4xl mx-auto">
-                        <p>Prepared for Maritime & Terminal Operations</p>
-                        <p class="mt-1">Standard Reference: API Manual of Petroleum Measurement Standards, Chapter 17.9
-                        </p>
-                    </footer>
-
-                    <!-- Back to top button -->
-                    <a href="#manualTop"
-                        class="fixed bottom-6 right-6 bg-brand-600 text-white p-3 rounded-full shadow-lg hover:bg-brand-700 transition-colors z-50 group">
-                        <i class="ph-bold ph-arrow-up text-xl group-hover:-translate-y-1 transition-transform"></i>
-                    </a>
-
                 </div>
             </div>
         </div>
@@ -1054,28 +726,48 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                     <div class="bg-black/20 p-1 rounded-lg flex items-center">
                         <button id="btnLoad" onclick="switchOperation('load')"
                             class="px-4 py-1.5 rounded-md text-sm font-medium bg-white text-brand-900 shadow-sm transition-all flex items-center gap-2">
-                            <i class="ph ph-arrow-circle-down"></i> โหลดลง
+                            <i class="ph ph-arrow-circle-down"></i> Loading
                         </button>
                         <button id="btnDischarge" onclick="switchOperation('discharge')"
                             class="px-4 py-1.5 rounded-md text-sm font-medium text-white/80 hover:text-white transition-all flex items-center gap-2">
-                            <i class="ph ph-arrow-circle-up"></i> จ่ายออก
+                            <i class="ph ph-arrow-circle-up"></i> Discharge
                         </button>
                     </div>
 
-                    <button onclick="openManual()"
-                        class="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white transition px-3 py-1.5 rounded-lg text-sm font-medium shrink-0 shadow-sm"
-                        title="คู่มือการใช้งาน">
-                        <i class="ph ph-info text-lg"></i> <span class="hidden sm:inline">คู่มือ</span>
-                    </button>
+                    <!-- Simulation Control Container -->
+                    <div class="bg-black/20 p-1 rounded-lg flex items-center gap-2 border border-white/10 no-print">
+                        <div class="bg-black/20 p-0.5 rounded-md flex items-center">
+                            <button id="modeToShore" onclick="switchCalcMode('toShore')"
+                                class="px-2.5 py-1 rounded text-xs font-bold bg-white text-brand-900 shadow-sm transition-all text-center">
+                                Simul.Shore.
+                            </button>
+                            <button id="modeToVessel" onclick="switchCalcMode('toVessel')"
+                                class="px-2.5 py-1 rounded text-xs font-bold text-white/80 hover:text-white transition-all text-center">
+                                Simul.Vessel.
+                            </button>
+                        </div>
+                        <button onclick="autoPullSim(1)" class="bg-white/10 text-[11px] font-bold text-white/95 hover:bg-white/20 px-2.5 py-1 rounded flex items-center gap-1.5 transition-all">
+                            <i class="ph ph-copy text-sm"></i> ดึง 1 แถว
+                        </button>
+                        <button onclick="autoPullSim(2)" class="bg-white/10 text-[11px] font-bold text-white/95 hover:bg-white/20 px-2.5 py-1 rounded flex items-center gap-1.5 transition-all">
+                            <i class="ph ph-copy text-sm"></i> ดึง 2 แถว
+                        </button>
+                        <div class="border-l border-white/20 h-5 self-center"></div>
+                        <div class="flex items-center gap-1.5 px-1.5">
+                            <input type="checkbox" id="showSimInPdf" onchange="togglePrintSimulation()"
+                                class="rounded text-brand-500 focus:ring-brand-500 w-3.5 h-3.5 cursor-pointer bg-white/10 border-white/20">
+                            <label for="showSimInPdf" class="text-white/95 text-[11px] font-bold cursor-pointer select-none">แสดงใน PDF</label>
+                        </div>
+                    </div>
 
-                    <button onclick="openDictionary()"
-                        class="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white transition px-3 py-1.5 rounded-lg text-sm font-medium shrink-0 shadow-sm"
-                        title="คำศัพท์และตัวย่อ VEF">
-                        <i class="ph ph-book-open text-lg"></i> <span class="hidden sm:inline">คำศัพท์</span>
+                                        <button onclick="openHelpModal('standard')"
+                        class="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white transition px-3.5 py-1.5 rounded-lg text-sm font-medium shrink-0 shadow-sm"
+                        title="คู่มือ & คำศัพท์">
+                        <i class="ph ph-book-open text-lg"></i> <span class="hidden sm:inline">คู่มือ & คำศัพท์</span>
                     </button>
 
                     <button onclick="window.print()"
@@ -1146,33 +838,40 @@
                                     <th class="px-2 py-1.5 text-center">Final VEF</th>
                                     <th class="px-2 py-1.5 text-center">Deviation %</th>
                                     <th class="px-2 py-1.5 text-right">Difference</th>
-                                    <th class="px-2 py-1.5 text-right" id="printSimOutputLabel">CAL.(Vessel / VEF)</th>
+                                    <th class="px-2 py-1.5 text-right" id="printSimOutputLabel">Shore.(Vessel / VEF)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow1">
                                     <td class="px-2 py-1.5 text-left" id="printSimVessel1"></td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimDate1" list="dateList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(1, 'date', this.value)">
+                                        <input type="date" id="printSimDate1"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer"
+                                            onchange="handleSimInputChange(1, 'date', this.value)">
                                     </td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimFrom1" list="fromList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(1, 'from', this.value)">
+                                        <select id="printSimFrom1"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(1, 'from', this.value)">
+                                        </select>
                                     </td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimTo1" list="toList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(1, 'to', this.value)">
+                                        <select id="printSimTo1"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(1, 'to', this.value)">
+                                        </select>
                                     </td>
                                     <td class="px-2 py-1.5 text-left whitespace-normal">
-                                        <input type="text" id="printSimProduct1" list="productList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(1, 'product', this.value)">
+                                        <select id="printSimProduct1"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(1, 'product', this.value)">
+                                        </select>
                                     </td>
-                                    <td class="px-2 py-1.5 text-right" id="printSimInput1"></td>
+                                    <td class="px-2 py-1.5 text-right">
+                                        <input type="text" id="printSimInput1"
+                                            class="w-full text-right bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-bold"
+                                            placeholder="-" oninput="handleSimTableInputChange(1, this.value)">
+                                    </td>
                                     <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
                                         id="printSimVEF1"></td>
                                     <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
@@ -1185,26 +884,33 @@
                                 <tr class="hover:bg-slate-50 transition-colors group" id="printSimRow2">
                                     <td class="px-2 py-1.5 text-left" id="printSimVessel2"></td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimDate2" list="dateList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(2, 'date', this.value)">
+                                        <input type="date" id="printSimDate2"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer"
+                                            onchange="handleSimInputChange(2, 'date', this.value)">
                                     </td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimFrom2" list="fromList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(2, 'from', this.value)">
+                                        <select id="printSimFrom2"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(2, 'from', this.value)">
+                                        </select>
                                     </td>
                                     <td class="px-2 py-1.5 text-left">
-                                        <input type="text" id="printSimTo2" list="toList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(2, 'to', this.value)">
+                                        <select id="printSimTo2"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(2, 'to', this.value)">
+                                        </select>
                                     </td>
                                     <td class="px-2 py-1.5 text-left whitespace-normal">
-                                        <input type="text" id="printSimProduct2" list="productList"
-                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium"
-                                            placeholder="-" oninput="handleSimInputChange(2, 'product', this.value)">
+                                        <select id="printSimProduct2"
+                                            class="w-full text-left bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-medium cursor-pointer appearance-none"
+                                            onchange="handleSimInputChange(2, 'product', this.value)">
+                                        </select>
                                     </td>
-                                    <td class="px-2 py-1.5 text-right" id="printSimInput2"></td>
+                                    <td class="px-2 py-1.5 text-right">
+                                        <input type="text" id="printSimInput2"
+                                            class="w-full text-right bg-transparent border border-transparent hover:border-slate-200 focus:border-brand-500 focus:bg-white/80 rounded px-1 py-0.5 transition-all outline-none text-xs text-slate-800 font-bold"
+                                            placeholder="-" oninput="handleSimTableInputChange(2, this.value)">
+                                    </td>
                                     <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
                                         id="printSimVEF2"></td>
                                     <td class="px-2 py-1.5 text-center font-mono text-slate-600 font-medium"
@@ -1420,97 +1126,7 @@
                     </div>
                 </div>
 
-                <!-- เครื่องมือจำลอง (ซ่อนตอนปริ้นเสมอ) -->
-                <div id="calcTool"
-                    class="no-print bg-gradient-to-br from-brand-600 to-brand-800 rounded-xl shadow-md border border-brand-500 overflow-hidden text-white relative theme-transition flex flex-col">
-                    <i
-                        class="ph ph-calculator text-8xl absolute -bottom-4 -right-4 text-white/10 rotate-12 pointer-events-none"></i>
-                    <div class="px-5 py-3 border-b border-white/10 relative z-10 bg-black/10">
-                        <h2 class="font-bold text-sm">จำลองปริมาณ (Simulation)</h2>
-                    </div>
-                    <div class="p-5 relative z-10 flex flex-col gap-4">
-                        <div class="flex rounded-lg bg-black/20 p-1">
-                            <button id="modeToShore" onclick="switchCalcMode('toShore')"
-                                class="flex-1 text-[11px] py-1.5 rounded-md font-bold bg-white text-brand-900 shadow-sm transition-all text-center">หาฝั่ง
-                                (Shore)</button>
-                            <button id="modeToVessel" onclick="switchCalcMode('toVessel')"
-                                class="flex-1 text-[11px] py-1.5 rounded-md font-bold text-white/80 hover:text-white transition-all text-center">หาเรือ
-                                (Vessel)</button>
-                        </div>
-                        <div class="space-y-3">
-                            <!-- Sim 1 -->
-                            <div class="bg-black/10 p-2 rounded-lg">
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] text-white/90 font-medium"
-                                        id="lblCalcInput1">ปริมาณจากเรือ 1 (bbls)</label>
-                                    <button onclick="clearSim(1)"
-                                        class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="text" id="calcInputValue1" placeholder="พิมพ์ค่า..."
-                                        class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
-                                    <i class="ph ph-arrow-right text-white/50"></i>
-                                    <div
-                                        class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
-                                        <span id="calcResultDisplay1">0.00</span>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="simVessel1"><input type="hidden" id="simDate1"><input
-                                    type="hidden" id="simFrom1"><input type="hidden" id="simTo1"><input type="hidden"
-                                    id="simProduct1">
-                            </div>
-
-                            <!-- Sim 2 -->
-                            <div class="bg-black/10 p-2 rounded-lg">
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] text-white/90 font-medium"
-                                        id="lblCalcInput2">ปริมาณจากเรือ 2 (bbls)</label>
-                                    <button onclick="clearSim(2)"
-                                        class="text-[9px] text-white/70 hover:text-white underline">ล้าง</button>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="text" id="calcInputValue2" placeholder="พิมพ์ค่า..."
-                                        class="w-1/2 bg-white/10 border border-white/20 rounded px-2 py-1.5 text-white placeholder-white/40 focus:outline-none transition font-bold text-sm tracking-wide">
-                                    <i class="ph ph-arrow-right text-white/50"></i>
-                                    <div
-                                        class="w-1/2 bg-white text-slate-800 rounded px-2 py-1.5 font-bold text-sm flex items-center shadow-inner">
-                                        <span id="calcResultDisplay2">0.00</span>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="simVessel2"><input type="hidden" id="simDate2"><input
-                                    type="hidden" id="simFrom2"><input type="hidden" id="simTo2"><input type="hidden"
-                                    id="simProduct2">
-                            </div>
-                        </div>
-
-                        <div class="pt-1 mt-auto">
-                            <div class="flex justify-between items-center mb-2">
-                                <p class="text-[9px] text-white/60 bg-black/10 inline-block px-1.5 py-0.5 rounded"
-                                    id="calcFormulaText">* สูตร: Vessel / VEF</p>
-                                <div class="flex gap-1">
-                                    <button onclick="autoPullSim(1)"
-                                        class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง
-                                        1 แถว</button>
-                                    <button onclick="autoPullSim(2)"
-                                        class="text-[9px] font-bold text-brand-900 bg-white px-2 py-0.5 rounded shadow hover:bg-brand-50 transition">ดึง
-                                        2 แถว</button>
-                                </div>
-                            </div>
-
-                            <!-- Checkbox for PDF -->
-                            <div class="flex items-center gap-2 pt-2 border-t border-white/10">
-                                <input type="checkbox" id="showSimInPdf"
-                                    class="rounded text-brand-500 focus:ring-brand-500 w-3 h-3 cursor-pointer"
-                                    onchange="togglePrintSimulation()">
-                                <label for="showSimInPdf"
-                                    class="text-[10px] text-white/90 cursor-pointer select-none">แสดงตารางจำลองปริมาณใน
-                                    PDF</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
+                </section>
 
             <!-- พื้นที่ลายเซ็น (แสดงเฉพาะตอน Print) -->
             <section class="signature-section w-full xl:col-span-3">
@@ -1520,7 +1136,7 @@
                 </div>
                 <div class="sig-box">
                     <p class="text-xs font-bold text-slate-900">Terminal Representative</p>
-                    <p class="text-[9px] text-slate-600">Cargo Control Room</p>
+                    <p class="text-[9px] text-slate-600">OR Operation</p>
                 </div>
             </section>
 
@@ -1876,6 +1492,8 @@
                 populateList('toList', uniqueTos);
                 populateList('productList', uniqueProducts);
 
+                updateSimDropdowns(uniqueFroms, uniqueTos, uniqueProducts);
+
                 document.getElementById('vesselSelect').disabled = false;
             }
 
@@ -1970,6 +1588,8 @@
                 populateDatalist('fromList', Array.from(vFroms).sort());
                 populateDatalist('toList', Array.from(vTos).sort());
                 populateDatalist('productList', Array.from(vProds).sort());
+
+                updateSimDropdowns(vFroms, vTos, vProds);
 
                 // Set report headers based on latest voyage
                 if (vesselData.length > 0) {
@@ -2104,8 +1724,12 @@
                 document.getElementById('dashHeader').className = `px-5 py-3 border-b flex justify-between items-center theme-transition ${isLoad ? 'border-brand-100 bg-brand-50' : 'border-discharge-100 bg-discharge-50'}`;
                 document.getElementById('dashTitleText').className = `font-bold text-sm uppercase tracking-wide theme-transition ${isLoad ? 'text-brand-900' : 'text-discharge-900'}`;
 
-                document.getElementById('calcTool').className = `no-print rounded-xl shadow-md overflow-hidden text-white relative theme-transition flex flex-col bg-gradient-to-br ${isLoad ? 'from-brand-600 to-brand-800 border border-brand-500' : 'from-discharge-600 to-discharge-800 border border-discharge-500'}`;
+                const calcToolEl = document.getElementById('calcTool');
+                if (calcToolEl) {
+                    calcToolEl.className = `no-print rounded-xl shadow-md overflow-hidden text-white relative theme-transition flex flex-col bg-gradient-to-br ${isLoad ? 'from-brand-600 to-brand-800 border border-brand-500' : 'from-discharge-600 to-discharge-800 border border-discharge-500'}`;
+                }
 
+                updateCalcModeUI();
                 updateSimulationLabels();
 
                 // Re-populate if vessel is selected, otherwise just load ui
@@ -2117,19 +1741,30 @@
                 }
             }
 
-            function switchCalcMode(mode) {
-                currentCalcMode = mode;
+            function updateCalcModeUI() {
                 const themeColor = currentOperation === 'load' ? 'text-brand-900' : 'text-discharge-900';
                 const btnS = document.getElementById('modeToShore'), btnV = document.getElementById('modeToVessel');
+                if (!btnS || !btnV) return;
 
-                btnS.className = "flex-1 text-[11px] py-1.5 rounded-md font-bold text-white/80 hover:text-white transition-all text-center";
-                btnV.className = "flex-1 text-[11px] py-1.5 rounded-md font-bold text-white/80 hover:text-white transition-all text-center";
+                btnS.className = "px-2.5 py-1 rounded text-xs font-bold text-white/80 hover:text-white transition-all text-center";
+                btnV.className = "px-2.5 py-1 rounded text-xs font-bold text-white/80 hover:text-white transition-all text-center";
 
-                if (mode === 'toShore') btnS.className = `flex-1 text-[11px] py-1.5 rounded-md font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
-                else btnV.className = `flex-1 text-[11px] py-1.5 rounded-md font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
+                if (currentCalcMode === 'toShore') {
+                    btnS.className = `px-2.5 py-1 rounded text-xs font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
+                } else {
+                    btnV.className = `px-2.5 py-1 rounded text-xs font-bold bg-white ${themeColor} shadow-sm transition-all text-center`;
+                }
+            }
 
-                document.getElementById('calcInputValue1').value = '';
-                document.getElementById('calcInputValue2').value = '';
+            function switchCalcMode(mode) {
+                currentCalcMode = mode;
+                updateCalcModeUI();
+
+                const printInp1 = document.getElementById('printSimInput1');
+                if (printInp1) printInp1.value = '';
+                const printInp2 = document.getElementById('printSimInput2');
+                if (printInp2) printInp2.value = '';
+
                 updateSimulationLabels();
                 calculateSimulations();
             }
@@ -2143,14 +1778,14 @@
                     if (lblI2) lblI2.textContent = textI + ' 2';
                     if (fText) fText.textContent = '* สูตร: Vessel / VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Vessel(TCV-OBQ)' : 'Vessel(TCV-ROB)';
-                    if (pLblO) pLblO.textContent = 'CAL.(Vessel / VEF)';
+                    if (pLblO) pLblO.textContent = 'Shore.(Vessel / VEF)';
                 } else {
                     const textI = currentOperation === 'load' ? 'ปริมาณจากฝั่ง (B/L)' : 'ปริมาณจากฝั่ง (Outturn)';
                     if (lblI1) lblI1.textContent = textI + ' 1';
                     if (lblI2) lblI2.textContent = textI + ' 2';
                     if (fText) fText.textContent = '* สูตร: Shore × VEF';
                     if (pLblI) pLblI.textContent = currentOperation === 'load' ? 'Bill of Lading' : 'Outturn';
-                    if (pLblO) pLblO.textContent = 'CAL.(Shore × VEF)';
+                    if (pLblO) pLblO.textContent = 'Vessel.(Shore × VEF)';
                 }
             }
 
@@ -2160,6 +1795,86 @@
                 if (parts.length > 2) { cVal = parts[0] + '.' + parts.slice(1).join(''); parts = cVal.split('.'); }
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return parts.join('.');
+            }
+
+            function parseToISODate(dateStr) {
+                if (!dateStr || dateStr === '-') return '';
+                let d = new Date(dateStr);
+                if (isNaN(d.getTime())) {
+                    const months = {
+                        jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+                        jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+                    };
+                    const clean = dateStr.replace(/[^a-zA-Z0-9\s-]/g, ' ');
+                    const parts = clean.split(/\s+|-/);
+                    if (parts.length >= 3) {
+                        const day = parseInt(parts[0]);
+                        const monthStr = parts[1].substring(0, 3).toLowerCase();
+                        const year = parseInt(parts[2]);
+                        if (!isNaN(day) && months[monthStr] !== undefined && !isNaN(year)) {
+                            d = new Date(year, months[monthStr], day);
+                        }
+                    }
+                }
+                if (d instanceof Date && !isNaN(d.getTime())) {
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${day}`;
+                }
+                return '';
+            }
+
+            function populateSelectOptions(selectId, array, currentValue) {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+                select.innerHTML = '<option value="">-</option>';
+                const opts = [...array];
+                if (currentValue && !opts.includes(currentValue) && currentValue !== '-') {
+                    opts.push(currentValue);
+                    opts.sort();
+                }
+                opts.forEach(val => {
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    opt.textContent = val;
+                    if (val === currentValue) {
+                        opt.selected = true;
+                    }
+                    select.appendChild(opt);
+                });
+            }
+
+            function updateSimDropdowns(froms, tos, prods) {
+                const fromsArr = Array.from(froms || []).sort();
+                const tosArr = Array.from(tos || []).sort();
+                const prodsArr = Array.from(prods || []).sort();
+
+                const d1_f = document.getElementById('simFrom1') ? document.getElementById('simFrom1').value : '';
+                const d2_f = document.getElementById('simFrom2') ? document.getElementById('simFrom2').value : '';
+                const d1_t = document.getElementById('simTo1') ? document.getElementById('simTo1').value : '';
+                const d2_t = document.getElementById('simTo2') ? document.getElementById('simTo2').value : '';
+                const d1_p = document.getElementById('simProduct1') ? document.getElementById('simProduct1').value : '';
+                const d2_p = document.getElementById('simProduct2') ? document.getElementById('simProduct2').value : '';
+
+                populateSelectOptions('printSimFrom1', fromsArr, d1_f);
+                populateSelectOptions('printSimFrom2', fromsArr, d2_f);
+                populateSelectOptions('printSimTo1', tosArr, d1_t);
+                populateSelectOptions('printSimTo2', tosArr, d2_t);
+                populateSelectOptions('printSimProduct1', prodsArr, d1_p);
+                populateSelectOptions('printSimProduct2', prodsArr, d2_p);
+            }
+
+            function handleSimTableInputChange(idx, value) {
+                let rStr = value.replace(/,/g, '').replace(/[^\d.]/g, ''), p = rStr.split('.');
+                if (p.length > 2) rStr = p[0] + '.' + p.slice(1).join('');
+                
+                const tableInput = document.getElementById(`printSimInput${idx}`);
+                if (tableInput) {
+                    tableInput.value = formatNumberWithCommas(rStr);
+                }
+                
+                calculateSimulations();
             }
 
             function handleInput(index, type) {
@@ -2273,25 +1988,18 @@
                 b.textContent = txt;
             }
 
-            function attachSimInputListener(id) {
-                document.getElementById(id).addEventListener('input', function (e) {
-                    let rStr = e.target.value.replace(/,/g, '').replace(/[^\d.]/g, ''), p = rStr.split('.');
-                    if (p.length > 2) rStr = p[0] + '.' + p.slice(1).join('');
-                    e.target.value = formatNumberWithCommas(rStr);
-                    calculateSimulations();
-                });
-            }
-            attachSimInputListener('calcInputValue1');
-            attachSimInputListener('calcInputValue2');
+
 
             function clearSim(idx) {
-                document.getElementById(`calcInputValue${idx}`).value = '';
-                document.getElementById(`simVessel${idx}`).value = '';
+                const tableInp = document.getElementById(`printSimInput${idx}`);
+                if (tableInp) tableInp.value = '';
+                const vInp = document.getElementById(`simVessel${idx}`);
+                if (vInp) vInp.value = '';
 
-                const d = document.getElementById(`simDate${idx}`); if (d) { d.value = ''; d.dataset.edited = 'false'; }
-                const f = document.getElementById(`simFrom${idx}`); if (f) { f.value = ''; f.dataset.edited = 'false'; }
-                const t = document.getElementById(`simTo${idx}`); if (t) { t.value = ''; t.dataset.edited = 'false'; }
-                const p = document.getElementById(`simProduct${idx}`); if (p) { p.value = ''; p.dataset.edited = 'false'; }
+                const pDate = document.getElementById(`printSimDate${idx}`); if (pDate) pDate.value = '';
+                const pFrom = document.getElementById(`printSimFrom${idx}`); if (pFrom) pFrom.value = '';
+                const pTo = document.getElementById(`printSimTo${idx}`); if (pTo) pTo.value = '';
+                const pProd = document.getElementById(`printSimProduct${idx}`); if (pProd) pProd.value = '';
 
                 calculateSimulations();
             }
@@ -2320,58 +2028,52 @@
                 const vesselName = document.getElementById('vesselSelect').value || '-';
 
                 if (foundRows.length > 0) {
-                    document.getElementById('simVessel1').value = vesselName;
+                    const v1 = document.getElementById('simVessel1'); if (v1) v1.value = vesselName;
 
-                    const d1 = document.getElementById('simDate1'); if (d1) { d1.value = foundRows[0].date; d1.dataset.edited = 'true'; }
-                    const f1 = document.getElementById('simFrom1'); if (f1) { f1.value = foundRows[0].from; f1.dataset.edited = 'true'; }
-                    const t1 = document.getElementById('simTo1'); if (t1) { t1.value = foundRows[0].to; t1.dataset.edited = 'true'; }
-                    const p1 = document.getElementById('simProduct1'); if (p1) { p1.value = foundRows[0].product; p1.dataset.edited = 'true'; }
+                    const pDate1 = document.getElementById('printSimDate1'); if (pDate1) pDate1.value = parseToISODate(foundRows[0].date);
+                    const pFrom1 = document.getElementById('printSimFrom1'); if (pFrom1) pFrom1.value = foundRows[0].from;
+                    const pTo1 = document.getElementById('printSimTo1'); if (pTo1) pTo1.value = foundRows[0].to;
+                    const pProd1 = document.getElementById('printSimProduct1'); if (pProd1) pProd1.value = foundRows[0].product;
 
                     let val1 = currentCalcMode === 'toShore' ? foundRows[0].vessel : foundRows[0].shore;
-                    document.getElementById('calcInputValue1').value = formatNumberWithCommas(val1);
+                    const printInp1 = document.getElementById('printSimInput1');
+                    if (printInp1) {
+                        printInp1.value = formatNumberWithCommas(val1);
+                    }
                 }
 
                 if (count > 1 && foundRows.length > 1) {
-                    document.getElementById('simVessel2').value = vesselName;
+                    const v2 = document.getElementById('simVessel2'); if (v2) v2.value = vesselName;
 
-                    const d2 = document.getElementById('simDate2'); if (d2) { d2.value = foundRows[1].date; d2.dataset.edited = 'true'; }
-                    const f2 = document.getElementById('simFrom2'); if (f2) { f2.value = foundRows[1].from; f2.dataset.edited = 'true'; }
-                    const t2 = document.getElementById('simTo2'); if (t2) { t2.value = foundRows[1].to; t2.dataset.edited = 'true'; }
-                    const p2 = document.getElementById('simProduct2'); if (p2) { p2.value = foundRows[1].product; p2.dataset.edited = 'true'; }
+                    const pDate2 = document.getElementById('printSimDate2'); if (pDate2) pDate2.value = parseToISODate(foundRows[1].date);
+                    const pFrom2 = document.getElementById('printSimFrom2'); if (pFrom2) pFrom2.value = foundRows[1].from;
+                    const pTo2 = document.getElementById('printSimTo2'); if (pTo2) pTo2.value = foundRows[1].to;
+                    const pProd2 = document.getElementById('printSimProduct2'); if (pProd2) pProd2.value = foundRows[1].product;
 
                     let val2 = currentCalcMode === 'toShore' ? foundRows[1].vessel : foundRows[1].shore;
-                    document.getElementById('calcInputValue2').value = formatNumberWithCommas(val2);
+                    const printInp2 = document.getElementById('printSimInput2');
+                    if (printInp2) {
+                        printInp2.value = formatNumberWithCommas(val2);
+                    }
                 }
                 calculateSimulations();
             }
 
             function calculateSimulations() {
                 for (let idx = 1; idx <= 2; idx++) {
-                    const rEl = document.getElementById(`calcResultDisplay${idx}`);
-                    let iValStr = document.getElementById(`calcInputValue${idx}`).value.replace(/,/g, '');
+                    const tableInput = document.getElementById(`printSimInput${idx}`);
+                    let iValStr = tableInput ? tableInput.value.replace(/,/g, '') : '';
                     const iVal = parseFloat(iValStr);
                     let res = 0;
                     if (vefData.isValid && !isNaN(iVal) && iVal > 0) {
                         res = currentCalcMode === 'toShore' ? iVal / vefData.vefValue : iVal * vefData.vefValue;
-                        rEl.textContent = formatDisplayNumber(res, 2);
-                    } else {
-                        rEl.textContent = '0.00';
                     }
                     updatePrintSimulationRow(idx, iValStr, res);
                 }
             }
 
             function updatePrintSimulationRow(idx, inputValStr, resultVal) {
-                const dHidden = document.getElementById(`simDate${idx}`);
-                const fHidden = document.getElementById(`simFrom${idx}`);
-                const tHidden = document.getElementById(`simTo${idx}`);
-                const pHidden = document.getElementById(`simProduct${idx}`);
-
-                let simDate = (dHidden && dHidden.dataset.edited === 'true') ? dHidden.value : ((dHidden ? dHidden.value : '') || document.getElementById('date_1').value || '-');
-                let simFrom = (fHidden && fHidden.dataset.edited === 'true') ? fHidden.value : ((fHidden ? fHidden.value : '') || document.getElementById('from_1').value || '-');
-                let simTo = (tHidden && tHidden.dataset.edited === 'true') ? tHidden.value : ((tHidden ? tHidden.value : '') || document.getElementById('to_1').value || '-');
-                let simProduct = (pHidden && pHidden.dataset.edited === 'true') ? pHidden.value : ((pHidden ? pHidden.value : '') || document.getElementById('product_1').value || '-');
-                let vesselName = document.getElementById(`simVessel${idx}`).value || document.getElementById('vesselSelect').value || '-';
+                let vesselName = document.getElementById('vesselSelect').value || '-';
 
                 const iVal = parseFloat(inputValStr);
                 const inputFormatted = (!isNaN(iVal) && iVal > 0) ? formatNumberWithCommas(inputValStr) : '-';
@@ -2391,11 +2093,11 @@
                 }
 
                 if (document.getElementById(`printSimVessel${idx}`)) document.getElementById(`printSimVessel${idx}`).textContent = vesselName;
-                if (document.getElementById(`printSimDate${idx}`)) document.getElementById(`printSimDate${idx}`).value = simDate;
-                if (document.getElementById(`printSimFrom${idx}`)) document.getElementById(`printSimFrom${idx}`).value = simFrom;
-                if (document.getElementById(`printSimTo${idx}`)) document.getElementById(`printSimTo${idx}`).value = simTo;
-                if (document.getElementById(`printSimProduct${idx}`)) document.getElementById(`printSimProduct${idx}`).value = simProduct;
-                if (document.getElementById(`printSimInput${idx}`)) document.getElementById(`printSimInput${idx}`).textContent = inputFormatted;
+                
+                const tableInput = document.getElementById(`printSimInput${idx}`);
+                if (tableInput && document.activeElement !== tableInput) {
+                    tableInput.value = (inputFormatted === '-' ? '' : inputFormatted);
+                }
                 if (document.getElementById(`printSimVEF${idx}`)) document.getElementById(`printSimVEF${idx}`).textContent = vefFormatted;
                 if (document.getElementById(`printSimDev${idx}`)) document.getElementById(`printSimDev${idx}`).textContent = devFormatted;
                 if (document.getElementById(`printSimDiff${idx}`)) document.getElementById(`printSimDiff${idx}`).textContent = diffFormatted;
@@ -2411,24 +2113,25 @@
                 }
                 calculateSimulations();
             }
-
-            function openDictionary() {
-                const modal = document.getElementById('dictionaryModal');
-                const content = document.getElementById('dictModalContent');
+            function openHelpModal(tab = 'standard') {
+                const modal = document.getElementById('helpModal');
+                const content = document.getElementById('helpModalContent');
+                if (!modal || !content) return;
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
 
-                // Allow display:flex to apply before animating opacity
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
                     content.classList.remove('scale-95');
                     content.classList.add('scale-100');
                 }, 10);
+                switchHelpTab(tab);
             }
 
-            function closeDictionary() {
-                const modal = document.getElementById('dictionaryModal');
-                const content = document.getElementById('dictModalContent');
+            function closeHelpModal() {
+                const modal = document.getElementById('helpModal');
+                const content = document.getElementById('helpModalContent');
+                if (!modal || !content) return;
                 modal.classList.add('opacity-0');
                 content.classList.remove('scale-100');
                 content.classList.add('scale-95');
@@ -2439,30 +2142,34 @@
                 }, 300);
             }
 
-            function openManual() {
-                const modal = document.getElementById('manualModal');
-                const content = document.getElementById('manualModalContent');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+            function switchHelpTab(tab) {
+                const tabs = ['standard', 'manual', 'glossary'];
+                const isLoad = currentOperation === 'load';
+                const activeBorderClass = isLoad ? 'border-brand-500' : 'border-discharge-500';
+                const activeTextClass = isLoad ? 'text-brand-600' : 'text-discharge-600';
+                
+                tabs.forEach(t => {
+                    const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+                    const pane = document.getElementById('tabPane' + t.charAt(0).toUpperCase() + t.slice(1));
+                    const modalIcon = document.getElementById('helpModalIcon');
+                    const modalIconContainer = document.getElementById('helpModalIconContainer');
 
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    content.classList.remove('scale-95');
-                    content.classList.add('scale-100');
-                }, 10);
-            }
-
-            function closeManual() {
-                const modal = document.getElementById('manualModal');
-                const content = document.getElementById('manualModalContent');
-                modal.classList.add('opacity-0');
-                content.classList.remove('scale-100');
-                content.classList.add('scale-95');
-
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 300);
+                    if (btn && pane) {
+                        if (t === tab) {
+                            btn.className = 'flex-1 py-3 px-2 text-center font-bold text-sm border-b-2 transition-all flex items-center justify-center gap-2 ' + activeBorderClass + ' ' + activeTextClass;
+                            pane.classList.remove('hidden');
+                            if (modalIcon && modalIconContainer) {
+                                modalIconContainer.className = 'w-8 h-8 rounded-lg flex items-center justify-center ' + (isLoad ? 'bg-brand-100 text-brand-600' : 'bg-discharge-100 text-discharge-600');
+                                if (t === 'standard') modalIcon.className = 'ph ph-anchor text-xl';
+                                else if (t === 'manual') modalIcon.className = 'ph ph-book-open-text text-xl';
+                                else if (t === 'glossary') modalIcon.className = 'ph ph-book-bookmark text-xl';
+                            }
+                        } else {
+                            btn.className = 'flex-1 py-3 px-2 text-center font-semibold text-sm border-b-2 transition-all flex items-center justify-center gap-2 border-transparent text-slate-500 hover:text-slate-800';
+                            pane.classList.add('hidden');
+                        }
+                    }
+                });
             }
 
             function togglePrintSimulation() {
@@ -2478,8 +2185,8 @@
             }
 
             function clearAllData(skipConfirm = false) {
-                const opTh = currentOperation === 'load' ? 'โหลดลงเรือ' : 'จ่ายออก';
-                if (skipConfirm || confirm(`คุณต้องการล้างข้อมูล "ฝั่ง${opTh}" ทั้งหมดใช่หรือไม่?`)) {
+                const opTh = currentOperation === 'load' ? 'Loading' : 'Discharge';
+                if (skipConfirm || confirm(`คุณต้องการล้างข้อมูลโหมด "${opTh}" ทั้งหมดใช่หรือไม่?`)) {
                     dataStore[currentOperation] = Array(MAX_ROWS).fill(null).map(() => ({ date: '', from: '', to: '', product: '', shore: '', vessel: '' }));
                     for (let i = 1; i <= MAX_ROWS; i++) {
                         document.getElementById(`date_${i}`).value = '';
