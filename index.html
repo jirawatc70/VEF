@@ -716,18 +716,22 @@
 
         <!-- Header (ซ่อนตอนปริ้น) -->
         <header id="appHeader" class="bg-brand-900 text-white shadow-md theme-transition no-print">
-            <div
-                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
+            <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col xl:flex-row xl:items-center justify-between gap-4 relative">
+                
+                <!-- Left: Title & Logo -->
+                <div class="flex items-center gap-3 shrink-0 w-full xl:w-auto justify-center xl:justify-start">
                     <i class="ph ph-boat text-3xl text-white/80"></i>
                     <div>
-                        <h1 class="text-xl font-bold" id="appTitle">VEF Calculator (Loading)</h1>
-                        <p class="text-xs text-white/70 font-light tracking-wide">API MPMS Chapter 17.9 Standard</p>
+                        <h1 class="text-xl font-bold leading-tight" id="appTitle">VEF Calculator (Loading)</h1>
+                        <p class="text-[10px] text-white/70 font-light tracking-wide mt-0.5">API MPMS Chapter 17.9 Standard</p>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
-                    <div class="bg-black/20 p-1 rounded-lg flex items-center">
+                <!-- Center: Controls -->
+                <div class="flex flex-wrap items-center justify-center gap-3 xl:gap-5 flex-grow">
+                    
+                    <!-- Operation Mode Toggle -->
+                    <div class="bg-black/20 p-1 rounded-lg flex items-center shrink-0">
                         <button id="btnLoad" onclick="switchOperation('load')"
                             class="px-4 py-1.5 rounded-md text-sm font-medium bg-white text-brand-900 shadow-sm transition-all flex items-center gap-2">
                             <i class="ph ph-arrow-circle-down"></i> Loading
@@ -739,7 +743,7 @@
                     </div>
 
                     <!-- Simulation Control Container -->
-                    <div class="bg-black/20 p-1 rounded-lg flex items-center gap-2 border border-white/10 no-print">
+                    <div class="bg-black/20 p-1 rounded-lg flex items-center gap-2 border border-white/10 no-print shrink-0">
                         <div class="bg-black/20 p-0.5 rounded-md flex items-center">
                             <button id="modeToShore" onclick="switchCalcMode('toShore')"
                                 class="px-2.5 py-1 rounded text-xs font-bold bg-white text-brand-900 shadow-sm transition-all text-center">
@@ -764,7 +768,11 @@
                         </div>
                     </div>
 
-                                        <button onclick="openHelpModal('standard')"
+                </div>
+
+                <!-- Right: Action Buttons -->
+                <div class="flex items-center gap-2 w-full xl:w-auto justify-center xl:justify-end shrink-0">
+                    <button onclick="openHelpModal('standard')"
                         class="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white transition px-3.5 py-1.5 rounded-lg text-sm font-medium shrink-0 shadow-sm"
                         title="คู่มือ & คำศัพท์">
                         <i class="ph ph-book-open text-lg"></i> <span class="hidden sm:inline">คู่มือ & คำศัพท์</span>
@@ -776,16 +784,17 @@
                     </button>
 
                     <button onclick="clearAllData(false)"
-                        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition px-3 py-1.5 rounded-lg text-sm shrink-0">
+                        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition px-3 py-1.5 rounded-lg text-sm shrink-0" title="ล้างข้อมูลทั้งหมด">
                         <i class="ph ph-trash"></i>
                     </button>
                 </div>
+
             </div>
         </header>
 
         <!-- Main Content -->
         <main
-            class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-6">
+            class="flex-grow max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-6">
 
             <!-- ส่วนหัวรายงาน (แสดงเฉพาะตอน Print) -->
             <div
