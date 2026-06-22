@@ -1609,6 +1609,13 @@
                 const history = vesselData.slice(0, MAX_ROWS);
 
                 populateTableWithHistory(history);
+
+                const pdfCheck = document.getElementById('showSimInPdf');
+                if (pdfCheck) {
+                    pdfCheck.checked = true;
+                    togglePrintSimulation();
+                }
+                autoPullSim(1);
             }
 
             function filterVoyageHistory() {
@@ -1738,8 +1745,7 @@
                     calcToolEl.className = `no-print rounded-xl shadow-md overflow-hidden text-white relative theme-transition flex flex-col bg-gradient-to-br ${isLoad ? 'from-brand-600 to-brand-800 border border-brand-500' : 'from-discharge-600 to-discharge-800 border border-discharge-500'}`;
                 }
 
-                updateCalcModeUI();
-                updateSimulationLabels();
+                switchCalcMode(isLoad ? 'toVessel' : 'toShore');
 
                 // Re-populate if vessel is selected, otherwise just load ui
                 if (document.getElementById('vesselSelect').value) {
@@ -2252,7 +2258,7 @@
                         document.getElementById('mainAppContainer').classList.remove('opacity-0');
                     }, 50);
 
-                    initTable(); switchOperation('load'); switchCalcMode('toShore');
+                    initTable(); switchOperation('load');
                     document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                     initMultiSelects();
                     loadFromFirebase();
